@@ -29,17 +29,17 @@ public class VistaJugador extends javax.swing.JFrame implements VistaControlMesa
                 cargarMesasAbiertas();
     }
     
-    private void cargarMesasAbiertas() {
+private void cargarMesasAbiertas() {
         DefaultListModel<String> model = new DefaultListModel<>();
         
         // Obtiene las mesas abiertas de la fachada
         for (Mesa mesa : Fachada.getInstancia().getMesas()) {
             if ("Abierta".equals(mesa.getEstado().toString())) {
                 // Agrega cada mesa en el formato adecuado para mostrar en la lista
-                model.addElement(mesa.getNumeroMesa() + " - Jugadores: " 
-                                + mesa.getCantidadActualJugadores() + "/" 
-                                + mesa.getCantidadJugadores() + " - Apuesta Base: $" 
-                                + mesa.getApuestaBase());
+                model.addElement(mesa.getNumeroMesa() + " - Esperando inicio de juego, hay " 
+                                 + mesa.getCantidadActualJugadores() + " jugadores de "
+                                 + mesa.getCantidadJugadores() + " en la mesa" 
+                                 );
             }
         }
         
@@ -133,6 +133,7 @@ public class VistaJugador extends javax.swing.JFrame implements VistaControlMesa
             if (numeroMesa == -1) return;
 
             controlMesa.ingresarMesa(usuarioConectado, numeroMesa);
+            dispose();
     }//GEN-LAST:event_btnSeleccionarMesaActionPerformed
 
     private int obtenerNumeroMesaSeleccionada() {

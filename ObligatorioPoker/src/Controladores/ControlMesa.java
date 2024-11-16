@@ -37,26 +37,37 @@ public class ControlMesa implements Observador {
         return fachada.getMesas();
     }
     
-    public void ingresarMesa(Jugador jugador, int numeroMesa) {
-        Mesa mesa = fachada.getMesaPorNumero(numeroMesa);
+public void ingresarMesa(Jugador jugador, int numeroMesa) {
+    Mesa mesa = fachada.getMesaPorNumero(numeroMesa);
 
-        if (mesa == null) {
-            vistaControlMesa.mostrarError("La mesa seleccionada no existe.");
-            return;
-        }
+    if (mesa == null) {
+        vistaControlMesa.mostrarError("La mesa seleccionada no existe.");
+        return;
+    }
 
-        double saldoMinimo = mesa.getApuestaBase() * 10;
+    double saldoMinimo = mesa.getApuestaBase() * 10;
 
-        if (jugador.getSaldo() >= saldoMinimo) {
-            if (fachada.getServicioMesas().agregarJugadorAMesa(numeroMesa, jugador)) {
-                vistaControlMesa.mostrarMensaje("Jugador ingresado a la mesa.");
-            } else {
-                vistaControlMesa.mostrarError("No se pudo ingresar al jugador. La mesa puede estar llena.");
+    if (jugador.getSaldo() >= saldoMinimo) {
+        if (fachada.getServicioMesas().agregarJugadorAMesa(numeroMesa, jugador)) {
+            vistaControlMesa.mostrarMensaje("Jugador ingresado a la mesa.");
+
+            // Verificar si la mesa está llena
+            if (mesa.getCantidadActualJugadores() == mesa.getCantidadJugadores()) {
+                // Cambiar el estado de la mesa
+                mesa.setEstado(new EstadoIniciada());
+                vistaControlMesa.mostrarMensaje("La mesa ha sido iniciada.");
+
+                // Repartir cartas y mostrar
+
+                mostrarCartasParaJugadores(mesa);
             }
         } else {
-            vistaControlMesa.mostrarError("Saldo insuficiente para ingresar a la mesa.");
+            vistaControlMesa.mostrarError("No se pudo ingresar al jugador. La mesa puede estar llena.");
         }
+    } else {
+        vistaControlMesa.mostrarError("Saldo insuficiente para ingresar a la mesa.");
     }
+}
 
         
     public Object[][] obtenerDatosMesas() {
@@ -81,6 +92,7 @@ public class ControlMesa implements Observador {
     }  
     
     public void mostrarCartasParaJugadores(Mesa mesa) {
+        System.out.println("mostrar cartas");
         for (Participacion participacion : mesa.getParticipaciones()) {
             Jugador jugador = participacion.getUnJugador();
             List<CartaPoker> cartasDeJugador = new ArrayList<>(participacion.getUnaMano().getCartas());

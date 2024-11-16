@@ -115,7 +115,6 @@ public class Mesa extends Observable {
     private void iniciarMesa() {
         estado = new EstadoIniciada();
         estado.iniciarJuego(this);
-
         Mazo mazo = new Mazo();
         mazo.barajar();
 

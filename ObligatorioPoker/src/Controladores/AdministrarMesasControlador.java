@@ -15,6 +15,7 @@ import Interfaces.VistaControlMesa;
 import Observador.Observable;
 import Observador.Observador;
 import Servicios.Fachada;
+import Servicios.ServicioMesas;
 import java.util.ArrayList;
 import java.util.List;
 import panelCartasPoker.CartaPoker;
@@ -32,6 +33,7 @@ public class AdministrarMesasControlador implements Observador{
             this.fachada = Fachada.getInstancia();
             this.mesaVista = vista; 
             inicializar();
+            fachada.getServicioMesas().agregarObservador(this);
             obtenerMesas();
         }
 
@@ -113,16 +115,13 @@ public class AdministrarMesasControlador implements Observador{
     }
 
 
-    @Override
-    public void actualizar(Observable origen, Object evento) {
-        if (EventosMesa.MesaCreada.equals(evento)) {
-        // Obtiene las mesas actualizadas desde la fachada
+@Override
+public void actualizar(Observable origen, Object evento) {
+    if (origen instanceof ServicioMesas) {
         ArrayList<Mesa> mesasActualizadas = obtenerMesas();
-        
-        // Actualiza la vista con las mesas
-        mesaVista.cargarMesas(mesasActualizadas);
+        mesaVista.cargarMesas(mesasActualizadas); // Actualizar la vista con las mesas más recientes
     }
-    }
+}
 
     private void inicializar() {
          for (Mesa mesa : fachada.getMesas()) {

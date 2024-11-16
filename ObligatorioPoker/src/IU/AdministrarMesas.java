@@ -9,6 +9,7 @@ import Interfaces.AdministrarMesasVista;
 import Interfaces.VistaControlMesa;
 
 import Observador.Observable;
+import Servicios.ServicioMesas;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -185,6 +186,13 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    
+    public void actualizar(Observable origen, Object evento) {
+        if (origen instanceof ServicioMesas) {
+            // Reutilizamos cargarDatosLista para actualizar la lista visualmente
+            cargarDatosLista();
+        }
+    }
 
 
 

@@ -48,21 +48,8 @@ public class ControlMesa implements Observador {
         double saldoMinimo = mesa.getApuestaBase() * 10;
 
         if (jugador.getSaldo() >= saldoMinimo) {
-            // Evitar duplicación de jugador en la misma mesa
-            if (mesa.getParticipaciones().stream().anyMatch(p -> p.getUnJugador().equals(jugador))) {
-                vistaControlMesa.mostrarError("El jugador ya está en la mesa.");
-                return;
-            }
-
-            if (mesa.agregarJugador(jugador)) {
+            if (fachada.getServicioMesas().agregarJugadorAMesa(numeroMesa, jugador)) {
                 vistaControlMesa.mostrarMensaje("Jugador ingresado a la mesa.");
-
-                if (mesa.getCantidadActualJugadores() == mesa.getCantidadJugadores()) {
-                    mesa.setEstado(new EstadoIniciada());
-                    vistaControlMesa.mostrarMensaje("La mesa ha sido iniciada.");
-                     mostrarCartasParaJugadores(mesa);
-                }
-
             } else {
                 vistaControlMesa.mostrarError("No se pudo ingresar al jugador. La mesa puede estar llena.");
             }
@@ -70,6 +57,7 @@ public class ControlMesa implements Observador {
             vistaControlMesa.mostrarError("Saldo insuficiente para ingresar a la mesa.");
         }
     }
+
         
     public Object[][] obtenerDatosMesas() {
         List<Mesa> mesas = fachada.getMesas();

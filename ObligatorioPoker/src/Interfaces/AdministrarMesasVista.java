@@ -19,6 +19,8 @@ public interface AdministrarMesasVista {
     public void mostrarError(String saldo_insuficiente_para_ingresar_a_la_mes);
 
     public void mostrarMensaje(String la_mesa_ha_sido_iniciada);
+
+    public void mostrarInformacionMano(Mesa mesa);
     
    
 }

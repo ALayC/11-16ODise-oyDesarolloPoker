@@ -19,34 +19,37 @@ public class VistaJugador extends javax.swing.JFrame implements VistaControlMesa
 
     private ControlMesa controlMesa;
     private final Fachada f = Fachada.getInstancia();
-    private Jugador usuarioConectado; 
-    
+    private Jugador usuarioConectado;
+
     public VistaJugador(Jugador jugador) {
-                initComponents();
-                this.usuarioConectado = jugador;
-               this.controlMesa = new ControlMesa( this);
-                setTitle(jugador.getNombreCompleto() + " | " + jugador.getSaldo());
-                cargarMesasAbiertas();
+        initComponents();
+        this.usuarioConectado = jugador;
+        this.controlMesa = new ControlMesa(this);
+        setTitle(jugador.getNombreCompleto() + " | " + jugador.getSaldo());
+        cargarMesasAbiertas();
     }
-    
-private void cargarMesasAbiertas() {
+
+    private void cargarMesasAbiertas() {
         DefaultListModel<String> model = new DefaultListModel<>();
-        
+
         // Obtiene las mesas abiertas de la fachada
         for (Mesa mesa : Fachada.getInstancia().getMesas()) {
             if ("Abierta".equals(mesa.getEstado().toString())) {
                 // Agrega cada mesa en el formato adecuado para mostrar en la lista
-                model.addElement(mesa.getNumeroMesa() + " - Esperando inicio de juego, hay " 
-                                 + mesa.getCantidadActualJugadores() + " jugadores de "
-                                 + mesa.getCantidadJugadores() + " en la mesa" 
-                                 );
+                model.addElement(
+                        mesa.getNumeroMesa() + " - "
+                        + "Jugadores actuales: " + mesa.getCantidadActualJugadores() + " - "
+                        + "Jugadores requeridos: " + mesa.getCantidadJugadores() + " - "
+                        + "Apuesta base: " + mesa.getApuestaBase() + " - "
+                        + "Porcentaje Comisión: " + mesa.getPorcentajeComision()
+                );
             }
         }
-        
+
         // Establece el modelo en el JList
         jList1.setModel(model);
     }
-        
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -89,34 +92,33 @@ private void cargarMesasAbiertas() {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 518, Short.MAX_VALUE)
                         .addComponent(btnLogout))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(47, 47, 47)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(238, 238, 238)
+                                .addComponent(lblListado))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(136, 136, 136)
-                                .addComponent(btnSeleccionarMesa)))
-                        .addGap(0, 46, Short.MAX_VALUE)))
+                                .addGap(227, 227, 227)
+                                .addComponent(btnSeleccionarMesa))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(145, 145, 145)
-                .addComponent(lblListado)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(22, 22, 22)
                 .addComponent(lblListado)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSeleccionarMesa)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addComponent(btnLogout)
                 .addContainerGap())
         );
@@ -129,11 +131,13 @@ private void cargarMesasAbiertas() {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnSeleccionarMesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarMesaActionPerformed
-            int numeroMesa = obtenerNumeroMesaSeleccionada();
-            if (numeroMesa == -1) return;
+        int numeroMesa = obtenerNumeroMesaSeleccionada();
+        if (numeroMesa == -1) {
+            return;
+        }
 
-            controlMesa.ingresarMesa(usuarioConectado, numeroMesa);
-            dispose();
+        controlMesa.ingresarMesa(usuarioConectado, numeroMesa);
+        dispose();
     }//GEN-LAST:event_btnSeleccionarMesaActionPerformed
 
     private int obtenerNumeroMesaSeleccionada() {
@@ -150,7 +154,7 @@ private void cargarMesasAbiertas() {
             return -1;
         }
     }
-    
+
     public void actualizar(Observable origen, Object evento) {
         if (evento instanceof String && ((String) evento).contains("mesa")) {
             cargarMesasAbiertas();  // Recarga la lista de mesas cuando hay cambios
@@ -166,7 +170,7 @@ private void cargarMesasAbiertas() {
     // End of variables declaration//GEN-END:variables
 
     private void logout() {
-         Fachada.getInstancia().quitar(usuarioConectado);
+        Fachada.getInstancia().quitar(usuarioConectado);
         dispose();
     }
 
@@ -175,10 +179,10 @@ private void cargarMesasAbiertas() {
         DefaultListModel<String> model = new DefaultListModel<>();
         for (Mesa mesa : mesas) {
             if ("Abierta".equals(mesa.getEstado())) {
-                model.addElement(mesa.getNumeroMesa() + " - Jugadores: " 
-                                 + mesa.getCantidadActualJugadores() + "/" 
-                                 + mesa.getCantidadJugadores() + " - Apuesta Base: $" 
-                                 + mesa.getApuestaBase());
+                model.addElement(mesa.getNumeroMesa() + " - Jugadores: "
+                        + mesa.getCantidadActualJugadores() + "/"
+                        + mesa.getCantidadJugadores() + " - Apuesta Base: $"
+                        + mesa.getApuestaBase());
             }
         }
         jList1.setModel(model);

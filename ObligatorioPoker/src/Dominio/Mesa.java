@@ -5,29 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mesa extends Observable {
-    private int cantidadJugadores;         // Jugadores requeridos para iniciar la mesa
-    private double apuestaBase;            // Apuesta inicial de la mesa
-    private double porcentajeComision;     // Porcentaje de comisión de la mesa
-    private EstadoMesa estado;                 // Estado de la mesa (Abierta, Cerrada, etc.)
-    private static int contadorMesas = 1;  // Contador para asignar números de mesa secuencialmente
-    private int numeroMesa;                // Número único de la mesa
-    private int cantidadActualJugadores;   // Cantidad actual de jugadores en la mesa
-    private int numeroManoActual;          // Número de la mano en curso
-    private double montoTotalApostado;     // Monto total apostado en la mesa
-    private double montoTotalRecaudado;    // Monto total recaudado en la mesa
-    private List<Mano> manos;              // Lista de manos jugadas en la mesa
-    private List<Participacion> participaciones; 
-    
-    
-    public Mesa(){
+    private int cantidadJugadores;         
+    private double apuestaBase;            
+    private double porcentajeComision;     
+    private EstadoMesa estado;             
+    private static int contadorMesas = 1;  
+    private int numeroMesa;                
+    private int cantidadActualJugadores;   
+    private int numeroManoActual;          
+    private double montoTotalApostado;     
+    private double montoTotalRecaudado;    
+    private List<Mano> manos;              
+    private List<Participacion> participaciones;
+
+    // Constructor vacío
+    public Mesa() {
+        this.manos = new ArrayList<>();
+        this.participaciones = new ArrayList<>();
     }
-    
+
+    // Constructor completo
     public Mesa(int cantidadJugadores, double apuestaBase, double porcentajeComision) {
-        
-        if (!esValida(cantidadJugadores, apuestaBase, porcentajeComision)){
-        throw new IllegalArgumentException("Parámetros inválidos para crear la mesa.");
+        if (!esValida(cantidadJugadores, apuestaBase, porcentajeComision)) {
+            throw new IllegalArgumentException("Parámetros inválidos para crear la mesa.");
         }
-        
+
         this.cantidadJugadores = cantidadJugadores;
         this.apuestaBase = apuestaBase;
         this.porcentajeComision = porcentajeComision;
@@ -38,8 +40,8 @@ public class Mesa extends Observable {
         this.montoTotalApostado = 0;
         this.montoTotalRecaudado = 0;
         this.manos = new ArrayList<>();
-        this.participaciones = new ArrayList<>();
-        avisar(this);  // Notificar que se ha creado una nueva mesa
+        this.participaciones = new ArrayList<>(); // Inicialización asegurada
+        avisar(this); // Notificar que se ha creado una nueva mesa
     }
 
     public void agregarParticipacion(Participacion participacion) {
@@ -144,20 +146,9 @@ public class Mesa extends Observable {
         avisar("Cantidad de jugadores actualizada");
   }
     private boolean esValida(int cantidadJugadores, double apuestaBase, double porcentajeComision) {
-        // Validaciones
-        if (cantidadJugadores < 2 || cantidadJugadores > 5) {
-            return false;
-        }
-
-        if (apuestaBase < 1) {
-            return false;
-        }
-
-        if (porcentajeComision < 1 || porcentajeComision > 50) {
-            return false;
-        }
-
-        return true;
+        return cantidadJugadores >= 2 && cantidadJugadores <= 5
+            && apuestaBase >= 1
+            && porcentajeComision >= 1 && porcentajeComision <= 50;
     }
     
     public boolean agregarJugador(Jugador jugador) {

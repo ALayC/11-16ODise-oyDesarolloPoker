@@ -100,7 +100,7 @@ public class AdministrarMesasControlador implements Observador{
             List<CartaPoker> cartasDeJugador = new ArrayList<>(participacion.getUnaMano().getCartas());
 
             // Crear el diálogo para el jugador actual
-            DialogPanelCartas dialog = new DialogPanelCartas(null, true);
+            DialogPanelCartas dialog = new DialogPanelCartas(null);
             dialog.setTitle("Jugador: " + jugador.getNombreCompleto());
 
             // Cargar las cartas en el panel de cartas

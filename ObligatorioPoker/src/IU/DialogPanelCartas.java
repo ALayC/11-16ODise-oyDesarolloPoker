@@ -19,8 +19,8 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     /**
      * Creates new form DialogPanelCartas
      */
-    public DialogPanelCartas(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public DialogPanelCartas(java.awt.Frame parent) {
+        super(parent);
         initComponents();
     }
 

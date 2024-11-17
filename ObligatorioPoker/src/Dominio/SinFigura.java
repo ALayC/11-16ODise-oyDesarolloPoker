@@ -13,7 +13,16 @@ public class SinFigura extends Figura {
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        return true;  // Siempre válida cuando no hay otra figura
+        // Asegura que las cartas estén ordenadas antes de validarlas
+        cartas.sort((c1, c2) -> Integer.compare(c1.getValorCarta(), c2.getValorCarta()));
+
+        // Verifica si las cartas están en secuencia consecutiva
+        for (int i = 1; i < cartas.size(); i++) {
+            if (cartas.get(i).getValorCarta() - cartas.get(i - 1).getValorCarta() != 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

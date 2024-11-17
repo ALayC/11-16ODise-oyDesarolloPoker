@@ -14,16 +14,23 @@ public class CreadorDeFiguras {
      * @return La figura correspondiente (Poker, Escalera, etc.).
      */
     public static Figura crearFigura(List<Carta> cartas) {
+        System.out.println("Cartas recibidas: " + cartas);
+
         if (new Poker(cartas).esValida(cartas)) {
+            System.out.println("Figura detectada: POKER");
             return new Poker(cartas);
         }
         if (new Escalera(cartas).esValida(cartas)) {
+            System.out.println("Figura detectada: ESCALERA");
             return new Escalera(cartas);
         }
         if (new Pierna(cartas).esValida(cartas)) {
+            System.out.println("Figura detectada: PIERNA");
             return new Pierna(cartas);
         }
-        return new SinFigura(cartas);  // Si no se encuentra ninguna figura válida
+
+        System.out.println("Figura detectada: SIN_FIGURA");
+        return new SinFigura(cartas); // Si no se encuentra ninguna figura válida
     }
 }
 

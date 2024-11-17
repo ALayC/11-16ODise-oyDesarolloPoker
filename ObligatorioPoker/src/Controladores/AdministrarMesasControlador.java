@@ -30,7 +30,7 @@ public class AdministrarMesasControlador implements Observador {
     private Fachada fachada;
     private AdministrarMesasVista mesaVista;
     private Mesa mesa;
-
+    
     public AdministrarMesasControlador(AdministrarMesasVista vista) {
         this.fachada = Fachada.getInstancia();
         this.mesaVista = vista;
@@ -104,7 +104,7 @@ public class AdministrarMesasControlador implements Observador {
             List<Carta> cartasDeJugador = participacion.obtenerCartasDeParticipacion();
 
             // Crear el diálogo para el jugador actual
-            DialogPanelCartas dialog = new DialogPanelCartas(null);
+            DialogPanelCartas dialog = new DialogPanelCartas(null, participacion); 
             dialog.setTitle("Jugador: " + jugador.getNombreCompleto());
 
             // Cargar las cartas en el panel de cartas

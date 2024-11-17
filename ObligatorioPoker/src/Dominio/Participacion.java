@@ -67,7 +67,7 @@ public class Participacion extends Observable {
 
     public void setEstado(Estado state) {
         this.estado = state;
-        avisar(Eventos.APUESTA); // Notifica a los observadores cuando se cambia el estado
+        avisar("EstadoActualizado"); // Notifica los cambios en el estado
     }
 
     public Jugador getUnJugador() {
@@ -108,6 +108,7 @@ public class Participacion extends Observable {
 
     public void setSaldoInicial(double saldoInicial) {
         this.saldoInicial = saldoInicial;
+        avisar("SaldoActualizado"); // Notifica los cambios en el saldo
     }
 
     // Método para realizar una apuesta
@@ -146,13 +147,20 @@ public class Participacion extends Observable {
     return cartas;
     }
 
-    public void setCartas(List<Carta> cartas) {
-        this.cartas = cartas;
+    public void setCartas(List<Carta> nuevasCartas) {
+        this.cartas = nuevasCartas;
+        avisar("CartasActualizadas"); // Notifica a los observadores sobre las nuevas cartas
     }
 
     public void agregarCartas(List<Carta> nuevasCartas) {
         this.cartas.addAll(nuevasCartas);
+        avisar("CartasActualizadas"); // Notifica los cambios en las cartas
     }
+    
+    public void actualizarSaldo(double nuevoSaldo) {
+    this.saldoInicial = nuevoSaldo;
+    avisar("SaldoActualizado"); // Notifica cambios en el saldo
+}
     
     public Figura getFigura(){
         return figura;
@@ -181,11 +189,8 @@ public class Participacion extends Observable {
     }
     
     public void calcularFigura() {
-        if (cartas != null && !cartas.isEmpty()) {
-            figura = CreadorDeFiguras.crearFigura(cartas); // Usa el creador para determinar la figura
-        } else {
-            figura = new SinFigura(cartas); // Sin figura si no hay cartas
-        }
+        System.out.println("Calculando figura para cartas: " + cartas);
+        figura = CreadorDeFiguras.crearFigura(cartas);
     }
         
             public void reiniciarParaNuevaMano() {

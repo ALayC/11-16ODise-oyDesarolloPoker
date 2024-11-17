@@ -4,6 +4,9 @@
  */
 package IU;
 
+import Dominio.Participacion;
+import Observador.Observable;
+import Observador.Observador;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import panelCartasPoker.CartaPoker;
@@ -14,14 +17,17 @@ import panelCartasPoker.PanelCartasPokerException;
  *
  * @author Santiago
  */
-public class DialogPanelCartas extends javax.swing.JDialog implements PanelCartasListener{
+public class DialogPanelCartas extends javax.swing.JDialog implements PanelCartasListener, Observador{
 
-    /**
-     * Creates new form DialogPanelCartas
-     */
-    public DialogPanelCartas(java.awt.Frame parent) {
+    private Participacion participacion;
+
+    public DialogPanelCartas(java.awt.Frame parent, Participacion participacion) {
         super(parent);
+        this.participacion = participacion; // Asocia la participación
         initComponents();
+        setTitle("Jugador: " + participacion.getUnJugador().getNombreCompleto() + 
+                 " | Saldo: $" + participacion.getUnJugador().getSaldo());
+        cargarCartas(new ArrayList<>(participacion.getCartas())); // Carga inicial de cartas
     }
 
     /**
@@ -161,6 +167,21 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
 
         public javax.swing.JButton getBtnRetirarse() {
             return btnRetirarse;
+        }
+
+        @Override
+        public void actualizar(Observable origen, Object evento) {
+            if (origen == participacion) {
+                actualizarVista(); // Refleja los cambios
+            }
+        }
+
+        // Refresca el título y las cartas visibles
+        private void actualizarVista() {
+            setTitle((participacion.estaActivo() ? "JUGANDO: " : "ESPERANDO: ") +
+                     participacion.getUnJugador().getNombreCompleto() +
+                     " | Saldo: $" + participacion.getSaldoInicial());
+            cargarCartas(new ArrayList<>(participacion.getCartas()));
         }
         
 }

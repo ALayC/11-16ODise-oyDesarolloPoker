@@ -253,6 +253,7 @@ public class Mesa extends Observable {
         return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
     }
 
+   
     public void iniciarNuevaMano() {
         Mazo mazo = new Mazo();
         mazo.barajar();
@@ -268,6 +269,27 @@ public class Mesa extends Observable {
         avisar("Nueva mano iniciada.");
     }
 
+    public void barajarNuevaMano() {
+        Mazo mazo = new Mazo();
+        mazo.barajar();
+
+        Mano nuevaMano = new Mano(numeroManoActual);
+        for (Participacion participacion : participaciones) {
+            participacion.setCartas(mazo.repartirMano(5)); // Reparte nuevas cartas
+            nuevaMano.agregarParticipacion(participacion);
+        }
+
+        manos.add(nuevaMano);
+        numeroManoActual++;
+        avisar("Nueva mano iniciada.");
+    }
+    
+    
+    
+    
+    
+    
+    
     public boolean estaListaParaIniciar() {
         return this.getCantidadActualJugadores() == this.getCantidadJugadores();
     }
@@ -293,24 +315,27 @@ public class Mesa extends Observable {
     }
 
     public void finalizarMano() {
-        Participacion ganador = participaciones.stream()
-                .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA)
-                .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
-                .orElse(null);
+    // Filtra participaciones válidas y con figura no nula
+    Participacion ganador = participaciones.stream()
+            .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA && p.getFigura() != null)
+            .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
+            .orElse(null);
 
-        if (ganador != null) {
-            double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
-            ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
-            montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
-            System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
-        }
-
-        // Verifica el saldo de los jugadores
-        verificarSaldoJugadores();
-
-        // Inicia una nueva mano
-        iniciarNuevaMano();
+    if (ganador != null) {
+        double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
+        ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
+        montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
+        System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
+    } else {
+        System.out.println("No hay un ganador en esta mano.");
     }
+
+    // Verifica el saldo de los jugadores
+    verificarSaldoJugadores();
+
+    // Inicia una nueva mano
+    barajarNuevaMano();
+}
 
     private void verificarSaldoJugadores() {
         participaciones.removeIf(p -> p.getUnJugador().getSaldo() < apuestaBase);

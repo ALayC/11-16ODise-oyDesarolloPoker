@@ -359,6 +359,8 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
     public void mostrarInformacionMano(Mesa mesa) {
         if (mesa != null) {
             txtNumMesa.setText(String.valueOf(mesa.getNumeroMesa()));
+           
+            
         }
     }
 

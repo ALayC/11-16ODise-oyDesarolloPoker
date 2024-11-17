@@ -144,4 +144,23 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     public void clickEnCarta(CartaPoker carta) {
         JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta",JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    
+    // Métodos públicos para acceder a los botones
+        public javax.swing.JButton getBtnPasar() {
+            return btnPasar;
+        }
+
+        public javax.swing.JButton getBtnApostar() {
+            return btnApostar;
+        }
+
+        public javax.swing.JButton getBtnPagar() {
+            return btnPagar;
+        }
+
+        public javax.swing.JButton getBtnRetirarse() {
+            return btnRetirarse;
+        }
+
 }

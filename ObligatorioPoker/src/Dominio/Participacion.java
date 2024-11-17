@@ -1,6 +1,8 @@
 package Dominio;
 
 import Observador.Observable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Clase que representa la participación de un jugador en una mesa de póker.
@@ -15,7 +17,8 @@ public class Participacion extends Observable {
     private double totalApostado;         // Total de apuestas realizadas por el jugador
     private double totalGanado;           // Total ganado en la mesa
     private double saldoInicial;          // Saldo del jugador al inicio de la participación
-
+    private List<Carta> cartas = new ArrayList<>();
+    private Figura figura;
     // Estados posibles para una participación
     public enum Estado {
         APUESTA, PASA, PAGA, NO_PAGA, ESPERANDO, JUGAR_DE_NUEVO, ESPERANDO_RONDA
@@ -34,7 +37,7 @@ public class Participacion extends Observable {
         this.estado = Estado.ESPERANDO;
         this.totalApostado = 0;
         this.totalGanado = 0;
-        
+         this.cartas = new ArrayList<>(cartas); // Inicializa las cartas
     }
 
     // Constructor vacío para otros usos o pruebas
@@ -140,6 +143,42 @@ public class Participacion extends Observable {
         return estado.equals(Estado.ESPERANDO_RONDA);
     }
     
+    public List<Carta> getCartas() {
+    return cartas;
+    }
+
+    public void setCartas(List<Carta> cartas) {
+        this.cartas = cartas;
+    }
+
+    public void agregarCartas(List<Carta> nuevasCartas) {
+        this.cartas.addAll(nuevasCartas);
+    }
     
+    public Figura getFigura(){
+        return figura;
+    }
+    public void setFigura(Figura figura){
+        this.figura = figura;
+    }
+    public List<Carta> obtenerCartasDeParticipacion() {
+        return new ArrayList<>(cartas); // Devuelve una copia de las cartas
+    }
+    
+    
+        public void pasar() {
+        setEstado(Estado.PASA); // Cambiar el estado a "pasar"
+        avisar(Eventos.APUESTA); // Notificar sobre la acción
+    }
+        
+    public boolean pagarApuesta(double monto) {
+        if (saldoInicial >= monto) {
+            saldoInicial -= monto;
+            totalApostado += monto;
+            setEstado(Estado.PAGA);
+            return true;
+        }
+        return false;
+    }
     
 }

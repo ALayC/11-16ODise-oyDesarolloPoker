@@ -112,38 +112,46 @@ public class Mesa extends Observable {
         avisar("Mesa cerrada");  // Notificar que la mesa ha sido cerrada
     }
 
-    private void iniciarMesa() {
+    public void iniciarMesa() {
         estado = new EstadoIniciada();
         estado.iniciarJuego(this);
         Mazo mazo = new Mazo();
         mazo.barajar();
 
+        // Crear una nueva mano para la mesa
+        Mano mano = new Mano(numeroManoActual);
+
         for (Participacion participacion : participaciones) {
-            Mano mano = new Mano(numeroManoActual);
-            mano.setCartas(new ArrayList<>(mazo.repartirMano(5))); // Asigna 5 cartas al jugador
-            participacion.setUnaMano(mano); // Asigna la mano a la participación
+            // Repartir cartas al jugador
+            List<Carta> cartasDelJugador = mazo.repartirMano(5);
+            participacion.setCartas(cartasDelJugador); // Asigna cartas a la participación
+            mano.agregarParticipacion(participacion); // Agrega la participación a la mano
         }
 
+        manos.add(mano); // Agregar la nueva mano a la mesa
         avisar("La mesa ha iniciado el juego.");
     }
-
-    
-    
-    
-    
+   
     // Método para agregar una mano a la mesa y actualizar los totales
     public void agregarMano(Mano mano) {
         this.manos.add(mano);
         this.numeroManoActual++;
-        this.montoTotalApostado += mano.getTotalApostado();
-        this.montoTotalRecaudado += mano.getTotalApostado() * (1 - porcentajeComision / 100);
+
+        // Calcular el total apostado en la mano a partir de las participaciones
+        double totalApostadoEnMano = mano.getParticipaciones()
+                                        .stream()
+                                        .mapToDouble(Participacion::getTotalApostado)
+                                        .sum();
+
+        this.montoTotalApostado += totalApostadoEnMano;
+        this.montoTotalRecaudado += totalApostadoEnMano * (1 - porcentajeComision / 100);
     }
 
     // Método para actualizar la cantidad actual de jugadores
     public void actualizarCantidadJugadores(int cantidad) {
-        this.cantidadActualJugadores = cantidad;
-        avisar("Cantidad de jugadores actualizada");
-  }
+            this.cantidadActualJugadores = cantidad;
+            avisar("Cantidad de jugadores actualizada");
+      }
     private boolean esValida(int cantidadJugadores, double apuestaBase, double porcentajeComision) {
         return cantidadJugadores >= 2 && cantidadJugadores <= 5
             && apuestaBase >= 1
@@ -208,11 +216,33 @@ public class Mesa extends Observable {
     public void setNumeroMesa(int numeroMesa) {
         this.numeroMesa = numeroMesa;
     }
+    
+    public void eliminarParticipacion(Participacion participacion) {
+        participaciones.remove(participacion); // Elimina la participación del jugador
+        cantidadActualJugadores--; // Actualiza la cantidad de jugadores actuales
+        avisar(this); // Notificar sobre el cambio en la mesa
+    }  
+    
+    public Mano getManoActual() {
+    if (manos.isEmpty()) {
+        return null; // Si no hay manos activas, devuelve null
+    }
+    return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
+    }
+    
+    public void iniciarNuevaMano() {
+        Mazo mazo = new Mazo();
+        mazo.barajar();
 
-    
-    
-    
-    
-    
-    
+        Mano nuevaMano = new Mano(numeroManoActual);
+        for (Participacion participacion : participaciones) {
+            participacion.setCartas(mazo.repartirMano(5)); // Reparte nuevas cartas
+            nuevaMano.agregarParticipacion(participacion);
+        }
+
+        manos.add(nuevaMano);
+        numeroManoActual++;
+        avisar("Nueva mano iniciada.");
+    }
+
 }

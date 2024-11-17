@@ -55,4 +55,9 @@ public class Mazo {
         }
         barajar();
     }
+    
+        // Método para verificar el tamaño restante del mazo
+    public int getCartasRestantes() {
+        return cartas.size();
+    }
 }

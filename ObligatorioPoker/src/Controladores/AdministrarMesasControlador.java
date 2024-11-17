@@ -4,6 +4,7 @@
  */
 package Controladores;
 
+import Dominio.Carta;
 import Dominio.EstadoIniciada;
 import Dominio.EventosMesa;
 import Dominio.Jugador;
@@ -100,7 +101,7 @@ public class AdministrarMesasControlador implements Observador {
     public void mostrarCartasParaJugadores(Mesa mesa) {
         for (Participacion participacion : mesa.getParticipaciones()) {
             Jugador jugador = participacion.getUnJugador();
-            List<CartaPoker> cartasDeJugador = new ArrayList<>(participacion.getUnaMano().getCartas());
+            List<Carta> cartasDeJugador = participacion.obtenerCartasDeParticipacion();
 
             // Crear el diálogo para el jugador actual
             DialogPanelCartas dialog = new DialogPanelCartas(null);

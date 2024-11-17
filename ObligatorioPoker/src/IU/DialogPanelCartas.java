@@ -162,5 +162,5 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
         public javax.swing.JButton getBtnRetirarse() {
             return btnRetirarse;
         }
-
+        
 }

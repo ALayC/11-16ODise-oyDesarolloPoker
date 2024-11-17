@@ -244,5 +244,8 @@ public class Mesa extends Observable {
         numeroManoActual++;
         avisar("Nueva mano iniciada.");
     }
+    public boolean estaListaParaIniciar() {
+    return this.getCantidadActualJugadores() == this.getCantidadJugadores();
+}
 
 }

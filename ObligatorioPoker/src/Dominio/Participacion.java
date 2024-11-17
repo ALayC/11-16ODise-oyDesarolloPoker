@@ -125,11 +125,10 @@ public class Participacion extends Observable {
     }
 
     // Método para gestionar cuando el jugador gana la mano
-    public void esGanador() {
-        double pozo = unaMesa.getPozo();
-        saldoInicial += pozo; // Se aumenta el saldo del jugador
+    public void esGanador(double pozo) {
+        saldoInicial += pozo;
         totalGanado += pozo;
-        avisar("Ganador de la mano"); // Notificar a los observadores
+        avisar("Ganador de la mano");
     }
 
     // Método para gestionar cuando el jugador no gana la mano
@@ -181,4 +180,22 @@ public class Participacion extends Observable {
         return false;
     }
     
+    public void calcularFigura() {
+        if (cartas != null && !cartas.isEmpty()) {
+            figura = CreadorDeFiguras.crearFigura(cartas); // Usa el creador para determinar la figura
+        } else {
+            figura = new SinFigura(cartas); // Sin figura si no hay cartas
+        }
+    }
+        
+            public void reiniciarParaNuevaMano() {
+        cartas.clear();
+        figura = null;
+        estado = Estado.ESPERANDO;
+    }
+                public boolean estaActivo() {
+        return estado == Estado.APUESTA || estado == Estado.ESPERANDO || estado == Estado.PAGA;
+    }
+                
+                
 }

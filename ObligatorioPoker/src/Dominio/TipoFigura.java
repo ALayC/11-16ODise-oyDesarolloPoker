@@ -9,7 +9,7 @@ package Dominio;
  * @author alay
  */
 public enum TipoFigura {
-    POKER(4), ESCALERA(3), PIERNA(2), PAR(1), SIN_FIGURA(0);
+    POKER(5), ESCALERA(4), PIERNA(3), TRIO (2),PAR(1), SIN_FIGURA(0);
 
     private final int valor;
 

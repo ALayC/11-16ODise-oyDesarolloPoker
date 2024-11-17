@@ -6,9 +6,11 @@ import java.util.List;
 
 /**
  * Clase que representa la participación de un jugador en una mesa de póker.
- * Extiende Observable para notificar a los observadores sobre cambios importantes.
+ * Extiende Observable para notificar a los observadores sobre cambios
+ * importantes.
  */
 public class Participacion extends Observable {
+
     private Jugador unJugador;            // Jugador asociado a esta participación
     private Mesa unaMesa;                 // Mesa en la que participa
     private Apuesta unaApuesta;           // Apuesta actual del jugador en la mano
@@ -19,6 +21,7 @@ public class Participacion extends Observable {
     private double saldoInicial;          // Saldo del jugador al inicio de la participación
     private List<Carta> cartas = new ArrayList<>();
     private Figura figura;
+
     // Estados posibles para una participación
     public enum Estado {
         APUESTA, PASA, PAGA, NO_PAGA, ESPERANDO, JUGAR_DE_NUEVO, ESPERANDO_RONDA
@@ -37,7 +40,7 @@ public class Participacion extends Observable {
         this.estado = Estado.ESPERANDO;
         this.totalApostado = 0;
         this.totalGanado = 0;
-         this.cartas = new ArrayList<>(cartas); // Inicializa las cartas
+        this.cartas = new ArrayList<>(cartas); // Inicializa las cartas
     }
 
     // Constructor vacío para otros usos o pruebas
@@ -142,9 +145,9 @@ public class Participacion extends Observable {
     public boolean esperandoRonda() {
         return estado.equals(Estado.ESPERANDO_RONDA);
     }
-    
+
     public List<Carta> getCartas() {
-    return cartas;
+        return cartas;
     }
 
     public void setCartas(List<Carta> nuevasCartas) {
@@ -156,28 +159,29 @@ public class Participacion extends Observable {
         this.cartas.addAll(nuevasCartas);
         avisar("CartasActualizadas"); // Notifica los cambios en las cartas
     }
-    
+
     public void actualizarSaldo(double nuevoSaldo) {
-    this.saldoInicial = nuevoSaldo;
-    avisar("SaldoActualizado"); // Notifica cambios en el saldo
-}
-    
-    public Figura getFigura(){
+        this.saldoInicial = nuevoSaldo;
+        avisar("SaldoActualizado"); // Notifica cambios en el saldo
+    }
+
+    public Figura getFigura() {
         return figura;
     }
-    public void setFigura(Figura figura){
+
+    public void setFigura(Figura figura) {
         this.figura = figura;
     }
+
     public List<Carta> obtenerCartasDeParticipacion() {
         return new ArrayList<>(cartas); // Devuelve una copia de las cartas
     }
-    
-    
-        public void pasar() {
-        setEstado(Estado.PASA); // Cambiar el estado a "pasar"
-        avisar(Eventos.APUESTA); // Notificar sobre la acción
+
+    public void pasar() {
+        setEstado(Estado.PASA); // Cambiar el estado a PASA
+        avisar("Jugador pasó el turno");
     }
-        
+
     public boolean pagarApuesta(double monto) {
         if (saldoInicial >= monto) {
             saldoInicial -= monto;
@@ -187,20 +191,30 @@ public class Participacion extends Observable {
         }
         return false;
     }
-    
+
     public void calcularFigura() {
         System.out.println("Calculando figura para cartas: " + cartas);
         figura = CreadorDeFiguras.crearFigura(cartas);
     }
-        
-            public void reiniciarParaNuevaMano() {
+
+    public void reiniciarParaNuevaMano() {
         cartas.clear();
         figura = null;
         estado = Estado.ESPERANDO;
     }
-                public boolean estaActivo() {
+
+    public boolean estaActivo() {
         return estado == Estado.APUESTA || estado == Estado.ESPERANDO || estado == Estado.PAGA;
     }
-                
-                
+
+    public boolean descontarSaldo(double monto) {
+        if (saldoInicial >= monto) {
+            saldoInicial -= monto; // Descuenta el monto del saldo inicial
+            avisar("SaldoActualizado"); // Notifica a los observadores sobre el cambio en el saldo
+            return true; // Indica que el descuento fue exitoso
+        } else {
+            return false; // Indica que no hay saldo suficiente
+        }
+    }
+
 }

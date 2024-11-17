@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mesa extends Observable {
-    private int cantidadJugadores;         
-    private double apuestaBase;            
-    private double porcentajeComision;     
-    private EstadoMesa estado;             
-    private static int contadorMesas = 1;  
-    private int numeroMesa;                
-    private int cantidadActualJugadores;   
-    private int numeroManoActual;          
-    private double montoTotalApostado;     
-    private double montoTotalRecaudado;    
-    private List<Mano> manos;              
+
+    private int cantidadJugadores;
+    private double apuestaBase;
+    private double porcentajeComision;
+    private EstadoMesa estado;
+    private static int contadorMesas = 1;
+    private int numeroMesa;
+    private int cantidadActualJugadores;
+    private int numeroManoActual;
+    private double montoTotalApostado;
+    private double montoTotalRecaudado;
+    private List<Mano> manos;
     private List<Participacion> participaciones;
 
     // Constructor vacío
@@ -51,10 +52,11 @@ public class Mesa extends Observable {
             avisar(this);
         }
     }
-    
+
     public List<Participacion> getParticipaciones() {
         return participaciones;
-    } 
+    }
+
     // Getters para los atributos requeridos
     public int getNumeroMesa() {
         return numeroMesa;
@@ -99,8 +101,7 @@ public class Mesa extends Observable {
     public void setEstado(EstadoMesa estado) {
         this.estado = estado;
     }
-    
-    
+
     // Métodos para cambiar el estado de la mesa
     public void abrirMesa() {
         estado.abrirMesa(this);
@@ -113,25 +114,40 @@ public class Mesa extends Observable {
     }
 
     public void iniciarMesa() {
+        montoTotalApostado = 0; // Inicializa el pozo en 0
+        System.out.println("Pozo inicial: " + montoTotalApostado); // Debug inicialización del pozo
+
         estado = new EstadoIniciada();
         estado.iniciarJuego(this);
         Mazo mazo = new Mazo();
         mazo.barajar();
 
-        // Crear una nueva mano para la mesa
         Mano mano = new Mano(numeroManoActual);
 
+        // Usa un iterador para evitar problemas al modificar la lista
+        List<Participacion> participantesEliminados = new ArrayList<>();
         for (Participacion participacion : participaciones) {
-            // Repartir cartas al jugador
-            List<Carta> cartasDelJugador = mazo.repartirMano(5);
-            participacion.setCartas(cartasDelJugador); // Asigna cartas a la participación
-            mano.agregarParticipacion(participacion); // Agrega la participación a la mano
+            double luz = apuestaBase;
+            if (participacion.descontarSaldo(luz)) {
+                montoTotalApostado += luz; // Incrementar el pozo con la luz
+                System.out.println("Pozo actualizado tras luz: " + montoTotalApostado); // Debug después de descontar la luz
+
+                // Asigna cartas a la participación
+                List<Carta> cartasDelJugador = mazo.repartirMano(5);
+                participacion.setCartas(cartasDelJugador); // Asigna las cartas
+                mano.agregarParticipacion(participacion); // Agrega la participación a la mano
+            } else {
+                participantesEliminados.add(participacion); // Agrega a una lista temporal para eliminar después
+            }
         }
 
-        manos.add(mano); // Agregar la nueva mano a la mesa
+        // Elimina las participaciones que no pudieron pagar la luz
+        participaciones.removeAll(participantesEliminados);
+
+        manos.add(mano);
         avisar("La mesa ha iniciado el juego.");
     }
-   
+
     // Método para agregar una mano a la mesa y actualizar los totales
     public void agregarMano(Mano mano) {
         this.manos.add(mano);
@@ -139,9 +155,9 @@ public class Mesa extends Observable {
 
         // Calcular el total apostado en la mano a partir de las participaciones
         double totalApostadoEnMano = mano.getParticipaciones()
-                                        .stream()
-                                        .mapToDouble(Participacion::getTotalApostado)
-                                        .sum();
+                .stream()
+                .mapToDouble(Participacion::getTotalApostado)
+                .sum();
 
         this.montoTotalApostado += totalApostadoEnMano;
         this.montoTotalRecaudado += totalApostadoEnMano * (1 - porcentajeComision / 100);
@@ -149,15 +165,16 @@ public class Mesa extends Observable {
 
     // Método para actualizar la cantidad actual de jugadores
     public void actualizarCantidadJugadores(int cantidad) {
-            this.cantidadActualJugadores = cantidad;
-            avisar("Cantidad de jugadores actualizada");
-      }
+        this.cantidadActualJugadores = cantidad;
+        avisar("Cantidad de jugadores actualizada");
+    }
+
     private boolean esValida(int cantidadJugadores, double apuestaBase, double porcentajeComision) {
         return cantidadJugadores >= 2 && cantidadJugadores <= 5
-            && apuestaBase >= 1
-            && porcentajeComision >= 1 && porcentajeComision <= 50;
+                && apuestaBase >= 1
+                && porcentajeComision >= 1 && porcentajeComision <= 50;
     }
-    
+
     public boolean agregarJugador(Jugador jugador) {
         // Verificar si el jugador ya está en la mesa para evitar duplicados
         if (participaciones.stream().anyMatch(p -> p.getUnJugador().equals(jugador))) {
@@ -178,7 +195,7 @@ public class Mesa extends Observable {
 
         // Incrementar la cantidad de jugadores una vez, solo aquí
         cantidadActualJugadores++;
-        avisar(this); 
+        avisar(this);
 
         // Cambiar el estado si se alcanza la cantidad requerida de jugadores
         if (cantidadActualJugadores == cantidadJugadores) {
@@ -187,18 +204,24 @@ public class Mesa extends Observable {
 
         return true;
     }
-        // Método para obtener el pozo actual de la mesa
+    // Método para obtener el pozo actual de la mesa
+
     public double getPozo() {
         return montoTotalApostado; // Pozo total de la mesa
+    }
+
+    public void agregarAlPozo(double monto) {
+        this.montoTotalApostado += monto;
+        avisar(this); // Notificar el cambio a los observadores
     }
 
     // Método para obtener el monto total apostado en la mesa
     public double getMontoApostado() {
         return montoTotalApostado; // Total acumulado de apuestas en la mesa
     }
-    
+
     public void notificarObservadores(Object evento) {
-    avisar(evento); // Llama al método protected avisar()
+        avisar(evento); // Llama al método protected avisar()
     }
 
     public void setCantidadJugadores(int cantidadJugadores) {
@@ -216,20 +239,20 @@ public class Mesa extends Observable {
     public void setNumeroMesa(int numeroMesa) {
         this.numeroMesa = numeroMesa;
     }
-    
+
     public void eliminarParticipacion(Participacion participacion) {
         participaciones.remove(participacion); // Elimina la participación del jugador
-        cantidadActualJugadores--; // Actualiza la cantidad de jugadores actuales
-        avisar(this); // Notificar sobre el cambio en la mesa
-    }  
-    
+        cantidadActualJugadores--; // Reduce la cantidad de jugadores
+        avisar(this); // Notifica que la mesa ha cambiado
+    }
+
     public Mano getManoActual() {
-    if (manos.isEmpty()) {
-        return null; // Si no hay manos activas, devuelve null
+        if (manos.isEmpty()) {
+            return null; // Si no hay manos activas, devuelve null
+        }
+        return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
     }
-    return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
-    }
-    
+
     public void iniciarNuevaMano() {
         Mazo mazo = new Mazo();
         mazo.barajar();
@@ -244,8 +267,67 @@ public class Mesa extends Observable {
         numeroManoActual++;
         avisar("Nueva mano iniciada.");
     }
+
     public boolean estaListaParaIniciar() {
-    return this.getCantidadActualJugadores() == this.getCantidadJugadores();
-}
+        return this.getCantidadActualJugadores() == this.getCantidadJugadores();
+    }
+
+    public void incrementarPozo(double monto) {
+        montoTotalApostado += monto; // Incrementa el pozo
+        System.out.println("Apuesta recibida: " + monto + ". Nuevo pozo: " + montoTotalApostado); // Debug del pozo tras cada apuesta
+        avisar("PozoActualizado"); // Notifica a las vistas si es necesario
+    }
+
+    public void registrarJugadorPasa(Participacion participacion) {
+        participacion.pasar(); // Actualiza el estado del jugador a PASA
+        verificarEstadoMano(); // Verifica si todos los jugadores pasaron
+    }
+
+    private void verificarEstadoMano() {
+        boolean todosPasaron = participaciones.stream()
+                .allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
+
+        if (todosPasaron) {
+            finalizarMano(); // Termina la mano actual si todos pasan
+        }
+    }
+
+    public void finalizarMano() {
+        Participacion ganador = participaciones.stream()
+                .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA)
+                .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
+                .orElse(null);
+
+        if (ganador != null) {
+            double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
+            ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
+            montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
+            System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
+        }
+
+        // Verifica el saldo de los jugadores
+        verificarSaldoJugadores();
+
+        // Inicia una nueva mano
+        iniciarNuevaMano();
+    }
+
+    private void verificarSaldoJugadores() {
+        participaciones.removeIf(p -> p.getUnJugador().getSaldo() < apuestaBase);
+    }
+
+    public void registrarJugadorPasaInicioApuesta(Participacion participacion) {
+        participacion.pasar(); // Cambia el estado del jugador a PASA
+        verificarTodosPasaronInicioApuesta(); // Verifica si todos pasaron
+    }
+
+    public void verificarTodosPasaronInicioApuesta() {
+        boolean todosPasaron = participaciones.stream()
+                .allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
+
+        if (todosPasaron) {
+            finalizarMano(); // Termina la mano si todos pasan
+        }
+    }
 
 }

@@ -4,10 +4,10 @@
  */
 package Dominio;
 
-public class Jugador extends Usuario{
-    
+public class Jugador extends Usuario {
+
     private float saldo;
-    
+
     public Jugador(String nombre) {
         super(nombre);
     }
@@ -15,8 +15,8 @@ public class Jugador extends Usuario{
     public float getSaldo() {
         return saldo;
     }
-    
+
     public void setSaldo(float saldo) {
         this.saldo = saldo;
-    } 
+    }
 }

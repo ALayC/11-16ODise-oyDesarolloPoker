@@ -8,7 +8,14 @@ import Dominio.Participacion;
 import Observador.Observable;
 import Observador.Observador;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import panelCartasPoker.CartaPoker;
 import panelCartasPoker.PanelCartasListener;
 import panelCartasPoker.PanelCartasPokerException;
@@ -17,16 +24,27 @@ import panelCartasPoker.PanelCartasPokerException;
  *
  * @author Santiago
  */
-public class DialogPanelCartas extends javax.swing.JDialog implements PanelCartasListener, Observador{
+public class DialogPanelCartas extends javax.swing.JDialog implements PanelCartasListener, Observador {
 
     private Participacion participacion;
+    private JLabel lblNumeroMesa;
+    private JLabel lblNumeroMano;
+    private JLabel lblFiguraAlta;
+    private JLabel lblPozo;
+    private javax.swing.JList<String> lstJugadores;
+    private javax.swing.JList<String> lstFiguras;
+    private JList<String> listaJugadores;
+    private DefaultListModel<String> modeloJugadores;
+    private JList<String> listaFigurasDisponibles;
+    private DefaultListModel<String> modeloFiguras;
 
     public DialogPanelCartas(java.awt.Frame parent, Participacion participacion) {
         super(parent);
         this.participacion = participacion; // Asocia la participación
-        initComponents();
-        setTitle("Jugador: " + participacion.getUnJugador().getNombreCompleto() + 
-                 " | Saldo: $" + participacion.getUnJugador().getSaldo());
+        initComponents(); // Inicializa los componentes básicos
+        configurarVistaAdicional(); // Configura los nuevos componentes
+        setTitle("Jugador: " + participacion.getUnJugador().getNombreCompleto()
+                + " | Saldo: $" + participacion.getUnJugador().getSaldo());
         cargarCartas(new ArrayList<>(participacion.getCartas())); // Carga inicial de cartas
     }
 
@@ -113,18 +131,19 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     /**
      * @param args the command line arguments
      */
-    
-    private void habilitarPanelActionPerformed(java.awt.event.ActionEvent evt) {                                               
+    private void habilitarPanelActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         panelCartasPoker1.setEnabled(habilitarPanel.isSelected());
-    }                                              
+    }
 
-    private void checkListenerActionPerformed(java.awt.event.ActionEvent evt) {                                              
+    private void checkListenerActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        if(checkListener.isSelected()){
+        if (checkListener.isSelected()) {
             panelCartasPoker1.setListener(this);
-        }else panelCartasPoker1.setListener(null);
-    }   
+        } else {
+            panelCartasPoker1.setListener(null);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnApostar;
     private javax.swing.JButton btnPagar;
@@ -132,56 +151,153 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     private javax.swing.JButton btnRetirarse;
     private panelCartasPoker.PanelCartasPoker panelCartasPoker1;
     // End of variables declaration//GEN-END:variables
-    
-        private javax.swing.JCheckBox checkListener;
+
+    private javax.swing.JCheckBox checkListener;
     private javax.swing.JCheckBox habilitarPanel;
     private javax.swing.JLabel jLabel1;
 
-    
-    
-    public void cargarCartas(ArrayList<CartaPoker> cartas){
+    public void cargarCartas(ArrayList<CartaPoker> cartas) {
         try {
             panelCartasPoker1.cargarCartas(cartas);
         } catch (PanelCartasPokerException ex) {
-             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-   }
+    }
+
     @Override
     public void clickEnCarta(CartaPoker carta) {
-        JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta",JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
     }
-    
-    
+
     // Métodos públicos para acceder a los botones
-        public javax.swing.JButton getBtnPasar() {
-            return btnPasar;
-        }
+    public javax.swing.JButton getBtnPasar() {
+        return btnPasar;
+    }
 
-        public javax.swing.JButton getBtnApostar() {
-            return btnApostar;
-        }
+    public javax.swing.JButton getBtnApostar() {
+        return btnApostar;
+    }
 
-        public javax.swing.JButton getBtnPagar() {
-            return btnPagar;
-        }
+    public javax.swing.JButton getBtnPagar() {
+        return btnPagar;
+    }
 
-        public javax.swing.JButton getBtnRetirarse() {
-            return btnRetirarse;
-        }
+    public javax.swing.JButton getBtnRetirarse() {
+        return btnRetirarse;
+    }
 
-        @Override
-        public void actualizar(Observable origen, Object evento) {
-            if (origen == participacion) {
-                actualizarVista(); // Refleja los cambios
-            }
+    @Override
+    public void actualizar(Observable origen, Object evento) {
+        if (origen == participacion) {
+            actualizarVista(); // Refleja los cambios
         }
+    }
 
-        // Refresca el título y las cartas visibles
-        private void actualizarVista() {
-            setTitle((participacion.estaActivo() ? "JUGANDO: " : "ESPERANDO: ") +
-                     participacion.getUnJugador().getNombreCompleto() +
-                     " | Saldo: $" + participacion.getSaldoInicial());
-            cargarCartas(new ArrayList<>(participacion.getCartas()));
-        }
-        
+    // Refresca el título y las cartas visibles
+    private void actualizarVista() {
+        setTitle((participacion.estaActivo() ? "JUGANDO: " : "ESPERANDO: ")
+                + participacion.getUnJugador().getNombreCompleto()
+                + " | Saldo: $" + participacion.getSaldoInicial());
+        cargarCartas(new ArrayList<>(participacion.getCartas()));
+    }
+
+    public Participacion getParticipacion() {
+        return participacion;
+    }
+
+    public void actualizarDatosVista(int numeroMesa, int numeroMano, String figuraAlta, double pozo, List<String> jugadores, List<String> figurasDisponibles) {
+        lblNumeroMesa.setText("Mesa: " + numeroMesa);
+        lblNumeroMano.setText("Mano: " + numeroMano);
+        lblFiguraAlta.setText("Figura alta: " + figuraAlta);
+        lblPozo.setText("Pozo: $" + pozo);
+
+        // Actualiza las listas
+        modeloJugadores.clear();
+        jugadores.forEach(modeloJugadores::addElement);
+
+        modeloFiguras.clear();
+        figurasDisponibles.forEach(modeloFiguras::addElement);
+    }
+
+    private void configurarVistaAdicional() {
+        // Inicializa los nuevos componentes
+        lblNumeroMesa = new JLabel("Mesa: -");
+        lblNumeroMano = new JLabel("Mano: -");
+        lblFiguraAlta = new JLabel("Figura alta: -");
+        lblPozo = new JLabel("Pozo: $0");
+
+        modeloJugadores = new DefaultListModel<>();
+        JList<String> listaJugadores = new JList<>(modeloJugadores);
+        listaJugadores.setBorder(BorderFactory.createTitledBorder("Jugadores en la mesa"));
+
+        modeloFiguras = new DefaultListModel<>();
+        JList<String> listaFigurasDisponibles = new JList<>(modeloFiguras);
+        listaFigurasDisponibles.setBorder(BorderFactory.createTitledBorder("Figuras disponibles"));
+
+        JScrollPane scrollJugadores = new JScrollPane(listaJugadores);
+        JScrollPane scrollFiguras = new JScrollPane(listaFigurasDisponibles);
+
+        // Modifica el diseño del formulario para incluir los nuevos componentes
+        GroupLayout layout = (GroupLayout) getContentPane().getLayout();
+        getContentPane().setLayout(layout);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(20)
+                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(lblNumeroMesa)
+                                                .addGap(40) // Espacio adicional entre elementos
+                                                .addComponent(lblNumeroMano)
+                                                .addGap(40)
+                                                .addComponent(lblFiguraAlta)
+                                                .addGap(40)
+                                                .addComponent(lblPozo))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(40)
+                                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(50)
+                                                .addComponent(btnPasar)
+                                                .addGap(50)
+                                                .addComponent(btnApostar)
+                                                .addGap(50)
+                                                .addComponent(btnPagar)
+                                                .addGap(50)
+                                                .addComponent(btnRetirarse)))
+                                .addGap(60)) // Aumenta el margen derecho para expandir
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGap(20)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblNumeroMesa)
+                                .addComponent(lblNumeroMano)
+                                .addComponent(lblFiguraAlta)
+                                .addComponent(lblPozo))
+                        .addGap(20)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
+                        .addGap(20)
+                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(30) // Espacio antes de los botones
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnPasar)
+                                .addComponent(btnApostar)
+                                .addComponent(btnPagar)
+                                .addComponent(btnRetirarse))
+                        .addGap(20) // Espacio adicional debajo de los botones
+        );
+
+        // Expande el tamaño de la ventana
+        setPreferredSize(new java.awt.Dimension(1100, 700)); // Ajusta el tamaño total (ancho x alto)
+        pack(); // Ajusta los componentes al tamaño preferido
+        setLocationRelativeTo(null); // Centra la ventana en la pantalla
+    }
+
 }

@@ -3,6 +3,7 @@ package Dominio;
 import java.util.List;
 
 public abstract class Figura {
+
     private final TipoFigura tipoFigura;
     private final List<Carta> cartas;
 
@@ -27,16 +28,15 @@ public abstract class Figura {
     public String toString() {
         return tipoFigura + " con cartas: " + cartas;
     }
-    
-    public boolean esMejorQue(Figura otraFigura) {
-    if (this.tipoFigura.getValor() > otraFigura.getTipoFigura().getValor()) {
-        return true;
-    } else if (this.tipoFigura.getValor() == otraFigura.getTipoFigura().getValor()) {
-        // Comparar valores principales en caso de empate
-        return this.cartas.get(0).getValorCarta() > otraFigura.getCartas().get(0).getValorCarta();
-    }
-    return false;
-}
 
-    
+
+    public boolean esMejorQue(Figura otraFigura) {
+        if (this.getTipoFigura().getValor() > otraFigura.getTipoFigura().getValor()) {
+            return true;
+        } else if (this.getTipoFigura().getValor() == otraFigura.getTipoFigura().getValor()) {
+            return this.compararCon(otraFigura) > 0;
+        }
+        return false;
+    }
+
 }

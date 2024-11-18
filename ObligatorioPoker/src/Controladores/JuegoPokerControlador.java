@@ -201,7 +201,6 @@ public class JuegoPokerControlador {
             }
         }
         if (ganador != null) {
-            ganador.esGanador(mesa.getPozo()); // Otorga el pozo al ganador
             vistaControlMesa.mostrarMensaje("Ganador: " + ganador.getUnJugador().getNombreCompleto()
                     + " | Figura: " + ganador.getFigura());
         }

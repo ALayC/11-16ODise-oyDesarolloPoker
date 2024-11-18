@@ -135,8 +135,12 @@ public class Participacion extends Observable {
 
     // Método para gestionar cuando el jugador gana la mano
     public void esGanador(double pozo) {
-        saldoInicial += pozo;
-        totalGanado += pozo;
+        System.out.println("Saldo antes "+unJugador.getSaldo() + unJugador.getNombre());
+        saldoInicial = unJugador.getSaldo();
+        totalGanado += pozo + saldoInicial;
+        unJugador.setSaldo((float) totalGanado);
+        System.out.println("Participacion" + pozo);
+        System.out.println("Saldo despues " + unJugador.getSaldo()+ unJugador.getNombre());
         avisar("Ganador de la mano");
     }
 
@@ -217,7 +221,8 @@ public class Participacion extends Observable {
 
     public boolean descontarSaldo(double monto) {
         if (saldoInicial >= monto) {
-            saldoInicial -= monto; // Descuenta el monto del saldo inicial
+            unJugador.setSaldo((float) (unJugador.getSaldo() - unaMesa.getApuestaBase()));
+            System.out.println("Jugador Saldo" + unJugador.getSaldo());
             avisar("SaldoActualizado"); // Notifica a los observadores sobre el cambio en el saldo
             return true; // Indica que el descuento fue exitoso
         } else {

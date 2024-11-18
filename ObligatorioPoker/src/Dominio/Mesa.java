@@ -130,7 +130,7 @@ public class Mesa extends Observable {
             double luz = apuestaBase;
             if (participacion.descontarSaldo(luz)) {
                 montoTotalApostado += luz; // Incrementar el pozo con la luz
-
+                
                 // Asigna cartas a la participación
                 List<Carta> cartasDelJugador = mazo.repartirMano(5);
                 participacion.setCartas(cartasDelJugador); // Asigna las cartas

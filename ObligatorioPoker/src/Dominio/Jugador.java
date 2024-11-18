@@ -19,4 +19,6 @@ public class Jugador extends Usuario {
     public void setSaldo(float saldo) {
         this.saldo = saldo;
     }
+
+    
 }

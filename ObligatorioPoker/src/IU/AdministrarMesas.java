@@ -3,6 +3,7 @@ package IU;
 import Controladores.AdministrarMesasControlador;
 import Controladores.ControlMesa;
 import Dominio.EstadoMesa;
+import Dominio.Jugador;
 import Dominio.Mano;
 import Dominio.Mesa;
 import Interfaces.AdministrarMesasVista;
@@ -359,8 +360,13 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
     public void mostrarInformacionMano(Mesa mesa) {
         if (mesa != null) {
             txtNumMesa.setText(String.valueOf(mesa.getNumeroMesa()));
-           
+            txtNumMano.setText(String.valueOf(mesa.getNumeroManoActual()));
+            txtJugPar.setText(String.valueOf(mesa.getCantidadActualJugadores()));
+            txtEstadoMano.setText(String.valueOf(mesa.getManoActual().getEstado()));        
             
+        
+        
+        
         }
     }
 

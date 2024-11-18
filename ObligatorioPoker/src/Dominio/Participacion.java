@@ -77,6 +77,10 @@ public class Participacion extends Observable {
     public Jugador getUnJugador() {
         return unJugador;
     }
+    
+    public String getNombreDeJugador(Jugador jugador){
+        return jugador.getNombreCompleto();
+    }
 
     public void setUnJugador(Jugador unJugador) {
         this.unJugador = unJugador;

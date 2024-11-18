@@ -84,6 +84,8 @@ public class Mano {
         return ganador;
     }
 
+    
+    
     public boolean todosHanPasado() {
         return participaciones.stream().allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
     }

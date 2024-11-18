@@ -82,7 +82,7 @@ public class InicioFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicioAdminActionPerformed
 
     private void btnInicioJugadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioJugadorActionPerformed
-                // Abrimos el diálogo de login de jugador y mostramos el botón de logout si el login es exitoso
+               
         new JugadorLoginVistaDialog().setVisible(true);
     }//GEN-LAST:event_btnInicioJugadorActionPerformed
 

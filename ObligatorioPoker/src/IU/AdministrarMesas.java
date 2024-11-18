@@ -17,65 +17,60 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 
-
 public class AdministrarMesas extends javax.swing.JFrame implements AdministrarMesasVista {
 
     private AdministrarMesasControlador controlador;
 
     public AdministrarMesas() {
         controlador = new AdministrarMesasControlador(this); // Pasar la vista al controlador
-        
+
         initComponents();
         setLocationRelativeTo(null); // Centrar la ventana
         cargarDatosLista();
         // Agregar listener a listMesas
         listMesas.addListSelectionListener(e -> {
-        if (!e.getValueIsAdjusting()) {
-            int selectedIndex = listMesas.getSelectedIndex();
-            if (selectedIndex != -1) {
-                Mesa mesaSeleccionada = controlador.obtenerMesas().get(selectedIndex);
-                mostrarInformacionMano(mesaSeleccionada);
+            if (!e.getValueIsAdjusting()) {
+                int selectedIndex = listMesas.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Mesa mesaSeleccionada = controlador.obtenerMesas().get(selectedIndex);
+                    mostrarInformacionMano(mesaSeleccionada);
+                }
             }
-        }
-    });
+        });
     }
 
     private void cargarDatosLista() {
-    DefaultListModel<String> listModel = new DefaultListModel<>();
+        DefaultListModel<String> listModel = new DefaultListModel<>();
 
-    // Variable para el monto total recaudado
-    double totalRecaudado = 0;
+        double totalRecaudado = 0;
 
-    // Obtener la lista de mesas desde el controlador
-    for (Mesa mesa : controlador.obtenerMesas()) {
-        int numeroMesa = mesa.getNumeroMesa();
-        int jugadoresRequeridos = mesa.getCantidadJugadores();
-        double apuestaBase = mesa.getApuestaBase();
-        int jugadoresActuales = mesa.getCantidadActualJugadores();
-        double montoTotalApostado = mesa.getMontoTotalApostado();
-        double porcentajeComision = mesa.getPorcentajeComision();
-        double montoTotalRecaudadoMesa = mesa.getMontoTotalRecaudado();
-        String estadoMesa = mesa.getEstado().toString();
+        // Obtener la lista de mesas desde el controlador
+        for (Mesa mesa : controlador.obtenerMesas()) {
+            int numeroMesa = mesa.getNumeroMesa();
+            int jugadoresRequeridos = mesa.getCantidadJugadores();
+            double apuestaBase = mesa.getApuestaBase();
+            int jugadoresActuales = mesa.getCantidadActualJugadores();
+            double montoTotalApostado = mesa.getMontoTotalApostado();
+            double porcentajeComision = mesa.getPorcentajeComision();
+            double montoTotalRecaudadoMesa = mesa.getMontoTotalRecaudado();
+            String estadoMesa = mesa.getEstado().toString();
 
-        totalRecaudado += montoTotalRecaudadoMesa;
+            totalRecaudado += montoTotalRecaudadoMesa;
 
-        // Información general de la mesa
-        String infoMesa = String.format(
-            "Mesa %d | Jugadores Requeridos: %d | Apuesta Base: %.2f | " +
-            "Jugadores Actuales: %d | Total Apostado: %.2f | " +
-            "Comisión: %.2f%% | Recaudado: %.2f | Estado: %s",
-            numeroMesa, jugadoresRequeridos, apuestaBase,
-            jugadoresActuales, montoTotalApostado,
-            porcentajeComision, montoTotalRecaudadoMesa, estadoMesa
-        );
+            String infoMesa = String.format(
+                    "Mesa %d | Jugadores Requeridos: %d | Apuesta Base: %.2f | "
+                    + "Jugadores Actuales: %d | Total Apostado: %.2f | "
+                    + "Comisión: %.2f%% | Recaudado: %.2f | Estado: %s",
+                    numeroMesa, jugadoresRequeridos, apuestaBase,
+                    jugadoresActuales, montoTotalApostado,
+                    porcentajeComision, montoTotalRecaudadoMesa, estadoMesa
+            );
 
-        listModel.addElement(infoMesa);
+            listModel.addElement(infoMesa);
+        }
+
+        listMesas.setModel(listModel);
     }
-
-    // Asignar el modelo a la lista ListMesas
-    listMesas.setModel(listModel);
-}
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -276,7 +271,6 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
      * @param args the command line arguments
      */
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -304,38 +298,35 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
 
     @Override
     public void cargarMesas(ArrayList<Mesa> mesas) {
-        // Crear un modelo de lista
-    DefaultListModel<String> listModel = new DefaultListModel<>();
-    
-    double totalRecaudado = 0;
-    for (Mesa mesa : mesas) {
-        int numeroMesa = mesa.getNumeroMesa();
-        int jugadoresRequeridos = mesa.getCantidadJugadores();
-        double apuestaBase = mesa.getApuestaBase();
-        int jugadoresActuales = mesa.getCantidadActualJugadores();
-        double montoTotalApostado = mesa.getMontoTotalApostado();
-        double porcentajeComision = mesa.getPorcentajeComision();
-        double montoTotalRecaudadoMesa = mesa.getMontoTotalRecaudado();
-        String estadoMesa = mesa.getEstado().toString();
 
-        totalRecaudado += montoTotalRecaudadoMesa;
+        DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        // Información general de la mesa
-        String mesaInfo = String.format(
-            "Mesa %d | Jugadores Requeridos: %d | Apuesta Base: %.2f | " +
-            "Jugadores Actuales: %d | Total Apostado: %.2f | " +
-            "Comisión: %.2f%% | Recaudado: %.2f | Estado: %s",
-            numeroMesa, jugadoresRequeridos, apuestaBase,
-            jugadoresActuales, montoTotalApostado,
-            porcentajeComision, montoTotalRecaudadoMesa, estadoMesa
-        );
+        double totalRecaudado = 0;
+        for (Mesa mesa : mesas) {
+            int numeroMesa = mesa.getNumeroMesa();
+            int jugadoresRequeridos = mesa.getCantidadJugadores();
+            double apuestaBase = mesa.getApuestaBase();
+            int jugadoresActuales = mesa.getCantidadActualJugadores();
+            double montoTotalApostado = mesa.getMontoTotalApostado();
+            double porcentajeComision = mesa.getPorcentajeComision();
+            double montoTotalRecaudadoMesa = mesa.getMontoTotalRecaudado();
+            String estadoMesa = mesa.getEstado().toString();
 
-        // Agregar la información al modelo de la lista
-        listModel.addElement(mesaInfo);
-    }
+            totalRecaudado += montoTotalRecaudadoMesa;
 
-    // Asignar el modelo a la JList
-    listMesas.setModel(listModel);
+            String mesaInfo = String.format(
+                    "Mesa %d | Jugadores Requeridos: %d | Apuesta Base: %.2f | "
+                    + "Jugadores Actuales: %d | Total Apostado: %.2f | "
+                    + "Comisión: %.2f%% | Recaudado: %.2f | Estado: %s",
+                    numeroMesa, jugadoresRequeridos, apuestaBase,
+                    jugadoresActuales, montoTotalApostado,
+                    porcentajeComision, montoTotalRecaudadoMesa, estadoMesa
+            );
+
+            listModel.addElement(mesaInfo);
+        }
+
+        listMesas.setModel(listModel);
     }
 
     @Override
@@ -348,10 +339,9 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    
     public void actualizar(Observable origen, Object evento) {
         if (origen instanceof ServicioMesas) {
-            // Reutilizamos cargarDatosLista para actualizar la lista visualmente
+
             cargarDatosLista();
         }
     }
@@ -362,14 +352,9 @@ public class AdministrarMesas extends javax.swing.JFrame implements AdministrarM
             txtNumMesa.setText(String.valueOf(mesa.getNumeroMesa()));
             txtNumMano.setText(String.valueOf(mesa.getNumeroManoActual()));
             txtJugPar.setText(String.valueOf(mesa.getCantidadActualJugadores()));
-            txtEstadoMano.setText(String.valueOf(mesa.getManoActual().getEstado()));        
-            
-        
-        
-        
+            txtEstadoMano.setText(String.valueOf(mesa.getManoActual().getEstado()));
+
         }
     }
-
-    
 
 }

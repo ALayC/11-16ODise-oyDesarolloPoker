@@ -34,21 +34,21 @@ public class ServicioUsuarios {
     private Usuario login(String cedula, String password) throws UsuarioException, UsuarioConectadoException {
         Usuario usuario = usuarios.get(cedula);
 
-        // Verificar si el usuario existe y si la contraseña es válida
+        
         if (usuario == null || !usuario.esPasswordValido(password)) {
             throw new UsuarioException("Credenciales incorrectas.");
         }
 
-        // Verificar si el usuario ya está en la lista de usuarios conectados
+        
         boolean yaConectado = usuariosConectados.stream()
                 .anyMatch(u -> u.getUsuario().getCedula().equals(cedula));
         
-        // Si ya está conectado, lanzamos una excepción
+        
         if (yaConectado) {
             throw new UsuarioConectadoException("Acceso denegado. El usuario ya está logueado.");
         }
         
-        // Añadir el usuario a la lista de conectados si no está ya conectado
+        
         UsuarioConectado usuarioConectado = new UsuarioConectado(usuario);
         usuariosConectados.add(usuarioConectado);
         

@@ -18,20 +18,20 @@ public class Poker extends Figura {
     public boolean esValida(List<Carta> cartas) {
         Map<Integer, Integer> conteoValores = new HashMap<>();
 
-        // Contar ocurrencias de cada valor de carta
+
         for (Carta carta : cartas) {
             int valor = carta.getValorCarta();
             conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
         }
 
-        // Verificar si hay exactamente un valor que aparece 4 veces
+
         for (int cantidad : conteoValores.values()) {
             if (cantidad == 4) {
                 return true;
             }
         }
 
-        return false; // No hay póker
+        return false; 
     }
 
     @Override

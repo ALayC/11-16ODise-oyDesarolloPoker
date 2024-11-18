@@ -47,14 +47,14 @@ public class Fachada {
         return usuariosConectados.isEmpty() ? null : usuariosConectados.get(usuariosConectados.size() - 1);
     }
      
-         // Método para agregar una mesa nueva al sistema
+     
     public void agregarMesa(Mesa mesa) {
        servicioMesas.agregarMesa(mesa);
     }
 
-    // Método para obtener todas las mesas activas (opcional)
+   
     public ArrayList<Mesa> getMesas() {
-        return servicioMesas.getMesas();  // Devuelve una copia para evitar modificaciones directas
+        return servicioMesas.getMesas();  
     }
     
     public ServicioMesas getServicioMesas() {

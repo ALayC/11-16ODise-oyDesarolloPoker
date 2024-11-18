@@ -16,16 +16,16 @@ public class Par extends Figura {
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        // Mapa para contar las ocurrencias de cada valor
+        
         Map<Integer, Integer> conteoValores = new HashMap<>();
 
-        // Contar cuántas veces aparece cada valor
+       
         for (Carta carta : cartas) {
             int valor = carta.getValorCarta();
             conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
         }
 
-        // Verificar si existe exactamente un par (valor que aparece exactamente 2 veces)
+        
         int pares = 0;
         for (int cantidad : conteoValores.values()) {
             if (cantidad == 2) {
@@ -33,7 +33,7 @@ public class Par extends Figura {
             }
         }
 
-        // Debe haber exactamente un par
+     
         return pares == 1;
     }
 
@@ -43,7 +43,7 @@ public class Par extends Figura {
             return this.getTipoFigura().getValor() - otraFigura.getTipoFigura().getValor();
         }
 
-        // Comparar el valor del par
+        
         int miPar = this.getCartas().get(0).getValorCarta();
         int otroPar = otraFigura.getCartas().get(0).getValorCarta();
 

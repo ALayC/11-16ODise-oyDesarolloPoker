@@ -18,13 +18,13 @@ public class Trio extends Figura {
     public boolean esValida(List<Carta> cartas) {
         Map<Integer, Integer> conteoValores = new HashMap<>();
 
-        // Contar ocurrencias de cada valor de carta
+     
         for (Carta carta : cartas) {
             int valor = carta.getValorCarta();
             conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
         }
 
-        // Verificar si hay exactamente un valor que aparece 3 veces
+      
         int trios = 0;
         for (int cantidad : conteoValores.values()) {
             if (cantidad == 3) {
@@ -32,7 +32,7 @@ public class Trio extends Figura {
             }
         }
 
-        return trios == 1; // Exactamente un trío
+        return trios == 1; 
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Trio extends Figura {
             return this.getTipoFigura().getValor() - otraFigura.getTipoFigura().getValor();
         }
 
-        // Comparar el valor del trío
+      
         int miTrio = this.getCartas().get(0).getValorCarta();
         int otroTrio = otraFigura.getCartas().get(0).getValorCarta();
 

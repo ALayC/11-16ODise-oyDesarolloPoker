@@ -35,20 +35,16 @@ public class JuegoPokerControlador {
         for (Participacion participacion : mesa.getParticipaciones()) {
             DialogPanelCartas dialog = new DialogPanelCartas(null, participacion);
 
-            // Configuración de botones y acciones
             configurarVistaJugador(dialog, participacion);
 
-            // Agrega la vista configurada a la lista de vistas
             vistas.add(dialog);
 
-            // Actualizar la vista con los datos iniciales
             actualizarVistaJugador(participacion);
         }
 
         juegoActivo = true;
         actualizarEstadoMano(EstadoMano.ESPERANDO_APUESTA);
 
-        // Mostrar todas las vistas al mismo tiempo
         mostrarCartasParaTodos();
     }
 
@@ -63,9 +59,9 @@ public class JuegoPokerControlador {
         }
 
         if (participacion.apostar(monto)) {
-            mesa.setUltimaApuesta(monto); // Registra el monto de la apuesta en la mesa
-            mesa.setJugadorUltimaApuesta(participacion); // Guarda quién hizo la última apuesta
-            mesa.incrementarPozo(monto); // Actualiza el pozo
+            mesa.setUltimaApuesta(monto);
+            mesa.setJugadorUltimaApuesta(participacion);
+            mesa.incrementarPozo(monto);
             System.out.println("Jugador " + participacion.getUnJugador().getNombreCompleto() + " apostó: " + monto);
             System.out.println("Nuevo pozo tras apuesta: " + mesa.getPozo());
             actualizarEstadoMano(EstadoMano.ESPERANDO_PAGO);
@@ -81,15 +77,13 @@ public class JuegoPokerControlador {
             return;
         }
 
-        // Obtiene el monto de la última apuesta realizada
         double montoPagar = mesa.getUltimaApuesta();
 
-        if (participacion.pagarApuesta(montoPagar)) { // Paga la apuesta si tiene saldo suficiente
-            mesa.incrementarPozo(montoPagar); // Agrega el monto al pozo de la mesa
+        if (participacion.pagarApuesta(montoPagar)) {
+            mesa.incrementarPozo(montoPagar);
             System.out.println("Jugador " + participacion.getUnJugador().getNombreCompleto() + " pagó: " + montoPagar);
             System.out.println("Nuevo pozo tras pago: " + mesa.getPozo());
 
-            // Finaliza la mano tras completar el pago
             finalizarMano();
         } else {
             mostrarError("Saldo insuficiente para pagar.");
@@ -99,68 +93,60 @@ public class JuegoPokerControlador {
     public void manejarPasar(Participacion participacion) {
         if (!mesa.getParticipaciones().contains(participacion)) {
             mostrarError("No puedes pasar, ya no estás en la mesa.");
-            return; // Ignora la acción si el jugador no está en la mesa
+            return;
         }
 
-        participacion.pasar(); // Actualiza el estado del jugador a PASA
+        participacion.pasar();
         System.out.println("Jugador " + participacion.getUnJugador().getNombreCompleto() + " pasó.");
 
         if (mesa.todosHanPasado()) {
-            mesa.finalizarMano(); // Finaliza la mano actual e inicia una nueva
+            mesa.finalizarMano();
 
-            // Actualizar las vistas de todos los jugadores automáticamente
             for (Participacion p : mesa.getParticipaciones()) {
-                actualizarVistaJugador(p); // Asegúrate de que todos vean sus nuevas cartas
+                actualizarVistaJugador(p);
             }
         } else {
-            verificarEstadoMano(); // Continua verificando el estado normal de la mano
+            verificarEstadoMano();
         }
     }
 
     public void manejarSalir(Participacion participacion) {
         if (!mesa.getParticipaciones().contains(participacion)) {
             mostrarError("Ya no estás en la mesa.");
-            return; // Ignora la acción si el jugador no está en la mesa
+            return;
         }
 
-        // Elimina la participación de la mesa
         mesa.eliminarParticipacion(participacion);
 
-        // Cierra la vista correspondiente al jugador
         cerrarVistaJugador(participacion);
 
-        // Verifica si la mesa queda vacía
         verificarEstadoMesa();
 
-        // Mostrar mensaje al jugador que salió
         JOptionPane.showMessageDialog(null,
                 "Has salido de la mesa. Gracias por participar.",
                 "Jugador Retirado",
                 JOptionPane.INFORMATION_MESSAGE);
-    
-       if(mesa.getCantidadActualJugadores() < mesa.getCantidadJugadores()){
-           
-       }
+
+        if (mesa.getCantidadActualJugadores() < mesa.getCantidadJugadores()) {
+
+        }
     }
 
     public void finalizarMano() {
         if (mesa.todosHanPasado()) {
             System.out.println("Todos han pasado. Iniciando nueva mano...");
 
-            // Cambiar el estado de todos los jugadores a ESPERANDO
             mesa.getParticipaciones().forEach(p -> p.setEstado(Participacion.Estado.ESPERANDO));
 
-            // Iniciar la nueva mano
             mesa.iniciarNuevaMano();
 
-            // Actualizar todas las vistas automáticamente
             actualizarVistas();
         } else {
-            // Calcular las figuras y determinar el ganador si aplica
+
             mesa.getParticipaciones().forEach(Participacion::calcularFigura);
             mesa.determinarGanador();
             determinarGanador();
-            // Reiniciar para nueva mano
+
             mesa.iniciarNuevaMano();
             actualizarVistas();
         }

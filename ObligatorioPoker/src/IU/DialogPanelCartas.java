@@ -174,16 +174,15 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     public void clickEnCarta(CartaPoker carta) {
         JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
         if (carta.estaVisible()) {
-        if (cartasSeleccionadas.contains(carta)) {
-            cartasSeleccionadas.remove(carta); // Si ya está seleccionada, quítala
-        } else {
-            cartasSeleccionadas.add(carta); // Si no está seleccionada, agrégala
+            if (cartasSeleccionadas.contains(carta)) {
+                cartasSeleccionadas.remove(carta);
+            } else {
+                cartasSeleccionadas.add(carta);
+            }
         }
-    }
-    JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // Métodos públicos para acceder a los botones
     public javax.swing.JButton getBtnPasar() {
         return btnPasar;
     }
@@ -203,11 +202,10 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     @Override
     public void actualizar(Observable origen, Object evento) {
         if (origen == participacion) {
-            actualizarVista(); // Refleja los cambios
+            actualizarVista();
         }
     }
 
-    // Refresca el título y las cartas visibles
     private void actualizarVista() {
         setTitle((participacion.estaActivo() ? "JUGANDO: " : "ESPERANDO: ")
                 + participacion.getUnJugador().getNombreCompleto()
@@ -225,7 +223,6 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
         lblFiguraAlta.setText("Figura alta: " + figuraAlta);
         lblPozo.setText("Pozo: $" + pozo);
 
-        // Actualiza las listas
         modeloJugadores.clear();
         jugadores.forEach(modeloJugadores::addElement);
 
@@ -234,88 +231,84 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     }
 
     private void configurarVistaAdicional() {
-    // Inicializa los nuevos componentes
-    lblNumeroMesa = new JLabel("Mesa: -");
-    lblNumeroMano = new JLabel("Mano: -");
-    lblFiguraAlta = new JLabel("Figura alta: -");
-    lblPozo = new JLabel("Pozo: $0");
 
-    modeloJugadores = new DefaultListModel<>();
-    listaJugadores = new JList<>(modeloJugadores);
-    listaJugadores.setBorder(BorderFactory.createTitledBorder("Jugadores en la mesa"));
+        lblNumeroMesa = new JLabel("Mesa: -");
+        lblNumeroMano = new JLabel("Mano: -");
+        lblFiguraAlta = new JLabel("Figura alta: -");
+        lblPozo = new JLabel("Pozo: $0");
 
-    modeloFiguras = new DefaultListModel<>();
-    listaFigurasDisponibles = new JList<>(modeloFiguras);
-    listaFigurasDisponibles.setBorder(BorderFactory.createTitledBorder("Figuras disponibles"));
+        modeloJugadores = new DefaultListModel<>();
+        listaJugadores = new JList<>(modeloJugadores);
+        listaJugadores.setBorder(BorderFactory.createTitledBorder("Jugadores en la mesa"));
 
-    JScrollPane scrollJugadores = new JScrollPane(listaJugadores);
-    JScrollPane scrollFiguras = new JScrollPane(listaFigurasDisponibles);
+        modeloFiguras = new DefaultListModel<>();
+        listaFigurasDisponibles = new JList<>(modeloFiguras);
+        listaFigurasDisponibles.setBorder(BorderFactory.createTitledBorder("Figuras disponibles"));
 
-    btnConfirmarCambio = new JButton("Confirmar Cambio");
-    btnConfirmarCambio.addActionListener(e -> manejarConfirmarCambio());
+        JScrollPane scrollJugadores = new JScrollPane(listaJugadores);
+        JScrollPane scrollFiguras = new JScrollPane(listaFigurasDisponibles);
 
-    GroupLayout layout = new GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
+        btnConfirmarCambio = new JButton("Confirmar Cambio");
+        btnConfirmarCambio.addActionListener(e -> manejarConfirmarCambio());
 
-    // Configura los gaps automáticos
-    layout.setAutoCreateGaps(true);
-    layout.setAutoCreateContainerGaps(true);
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
 
-    // Configuración horizontal
-    layout.setHorizontalGroup(
-        layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(lblNumeroMesa)
-                .addGap(20)
-                .addComponent(lblNumeroMano)
-                .addGap(20)
-                .addComponent(lblFiguraAlta)
-                .addGap(20)
-                .addComponent(lblPozo))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
-                .addGap(20)
-                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
-            .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(btnPasar)
-                .addGap(20)
-                .addComponent(btnApostar)
-                .addGap(20)
-                .addComponent(btnPagar)
-                .addGap(20)
-                .addComponent(btnConfirmarCambio)
-                .addGap(20)
-                .addComponent(btnRetirarse))
-    );
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
 
-    // Configuración vertical
-    layout.setVerticalGroup(
-        layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(lblNumeroMesa)
-                .addComponent(lblNumeroMano)
-                .addComponent(lblFiguraAlta)
-                .addComponent(lblPozo))
-            .addGap(20)
-            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
-            .addGap(20)
-            .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addGap(20)
-            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(btnPasar)
-                .addComponent(btnApostar)
-                .addComponent(btnPagar)
-                .addComponent(btnConfirmarCambio)
-                .addComponent(btnRetirarse))
-    );
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblNumeroMesa)
+                                .addGap(20)
+                                .addComponent(lblNumeroMano)
+                                .addGap(20)
+                                .addComponent(lblFiguraAlta)
+                                .addGap(20)
+                                .addComponent(lblPozo))
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                                .addGap(20)
+                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
+                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnPasar)
+                                .addGap(20)
+                                .addComponent(btnApostar)
+                                .addGap(20)
+                                .addComponent(btnPagar)
+                                .addGap(20)
+                                .addComponent(btnConfirmarCambio)
+                                .addGap(20)
+                                .addComponent(btnRetirarse))
+        );
 
-    pack(); // Ajusta el tamaño de la ventana
-    setLocationRelativeTo(null); // Centra la ventana en la pantalla
-}
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblNumeroMesa)
+                                .addComponent(lblNumeroMano)
+                                .addComponent(lblFiguraAlta)
+                                .addComponent(lblPozo))
+                        .addGap(20)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
+                        .addGap(20)
+                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(20)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnPasar)
+                                .addComponent(btnApostar)
+                                .addComponent(btnPagar)
+                                .addComponent(btnConfirmarCambio)
+                                .addComponent(btnRetirarse))
+        );
 
+        pack();
+        setLocationRelativeTo(null);
+    }
 
     private void manejarConfirmarCambio() {
         if (cartasSeleccionadas.isEmpty()) {
@@ -323,26 +316,21 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
             return;
         }
 
-        // Convertir las cartas seleccionadas a objetos de tipo `Carta`
         List<Carta> cartasAIntercambiar = cartasSeleccionadas.stream()
                 .map(cartaPoker -> new Carta(cartaPoker.getValorCarta(), cartaPoker.getPaloCarta()))
                 .collect(Collectors.toList());
 
-        // Notificar al controlador para manejar el cambio
         participacion.intercambiarCartas(cartasAIntercambiar);
 
         JOptionPane.showMessageDialog(this, "Cartas cambiadas exitosamente.", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
 
-        // Actualizar la vista con las nuevas cartas
         cargarCartas(new ArrayList<>(participacion.getCartas()));
 
-        // Vaciar la lista de seleccionadas para futuras acciones
         cartasSeleccionadas.clear();
     }
-
 
     public PanelCartasPoker getPanelCartasPoker() {
         return panelCartasPoker1;
     }
-    
+
 }

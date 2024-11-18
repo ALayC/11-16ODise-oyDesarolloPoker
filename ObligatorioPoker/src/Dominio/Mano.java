@@ -5,28 +5,28 @@ import java.util.List;
 
 public class Mano {
 
-    private final int numero;             // Número de la mano
-    private final List<Participacion> participaciones;  // Participaciones activas en la mano
-    private double pozo;                  // Pozo acumulado en la mano
-    private EstadoMano estado;            // Estado actual de la mano
-    private Participacion ganador;        // Ganador de la mano
-    private CreadorDeFiguras creadorDeFiguras;  // Generador de figuras para evaluar las cartas
+    private final int numero;             
+    private final List<Participacion> participaciones;  
+    private double pozo;                 
+    private EstadoMano estado;           
+    private Participacion ganador;        
+    private CreadorDeFiguras creadorDeFiguras;  
 
     public Mano(int numero) {
         this.numero = numero;
         this.participaciones = new ArrayList<>();
         this.pozo = 0;
-        this.estado = EstadoMano.EN_JUEGO;  // Estado inicial de la mano
-        this.creadorDeFiguras = new CreadorDeFiguras(); // Instanciar el generador de figuras
+        this.estado = EstadoMano.EN_JUEGO;  
+        this.creadorDeFiguras = new CreadorDeFiguras(); 
 
     }
 
-    // Getter para el número de la mano
+
     public int getNumero() {
         return numero;
     }
 
-    // Getter y setter para el pozo
+
     public double getPozo() {
         return pozo;
     }
@@ -35,7 +35,7 @@ public class Mano {
         this.pozo += monto;
     }
 
-    // Getter y setter para el estado de la mano
+
     public EstadoMano getEstado() {
         return estado;
     }
@@ -44,7 +44,7 @@ public class Mano {
         this.estado = estado;
     }
 
-    // Métodos para manejar las participaciones
+
     public List<Participacion> getParticipaciones() {
         return participaciones;
     }
@@ -53,19 +53,19 @@ public class Mano {
         participaciones.add(participacion);
     }
 
-    // Método para evaluar las figuras de los jugadores
+
     public void evaluarFiguras() {
         for (Participacion participacion : participaciones) {
-            // Obtener las cartas de la participación
+           
             List<Carta> cartasDelJugador = participacion.getCartas();
-            // Generar figura usando CreadorDeFiguras
+           
             Figura figura = CreadorDeFiguras.crearFigura(cartasDelJugador);
-            // Asignar la figura a la participación
+           
             participacion.setFigura(figura);
         }
     }
 
-    // Método para determinar el ganador de la mano
+  
     public Participacion determinarGanador() {
         Participacion mejorParticipacion = null;
 
@@ -76,10 +76,10 @@ public class Mano {
             }
         }
 
-        return mejorParticipacion; // Devuelve la mejor participación
+        return mejorParticipacion; 
     }
 
-    // Getter para el ganador
+   
     public Participacion getGanador() {
         return ganador;
     }

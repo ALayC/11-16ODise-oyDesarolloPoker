@@ -11,7 +11,7 @@ public class Mazo {
 
     public Mazo() {
         cartas = new ArrayList<>();
-        // Generar las 52 cartas del mazo usando los valores de `CartaPoker`
+       
         int[] valores = {
             CartaPoker.AS, CartaPoker.DOS, CartaPoker.TRES, CartaPoker.CUATRO,
             CartaPoker.CINCO, CartaPoker.SEIS, CartaPoker.SIETE, CartaPoker.OCHO,
@@ -56,7 +56,7 @@ public class Mazo {
         barajar();
     }
     
-        // Método para verificar el tamaño restante del mazo
+       
     public int getCartasRestantes() {
         return cartas.size();
     }

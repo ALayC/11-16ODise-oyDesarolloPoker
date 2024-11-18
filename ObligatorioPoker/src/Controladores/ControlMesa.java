@@ -18,12 +18,12 @@ public class ControlMesa implements Observador {
     public ControlMesa(VistaControlMesa vistaControlMesa) {
         this.fachada = Fachada.getInstancia();
         this.vistaControlMesa = vistaControlMesa;
-        fachada.getServicioMesas().agregarObservador(this); // Observa cambios en las mesas
+        fachada.getServicioMesas().agregarObservador(this); 
     }
 
     public void crearMesa(int cantidadJugadores, double apuestaBase, double porcentajeComision) {
         Mesa nuevaMesa = new Mesa(cantidadJugadores, apuestaBase, porcentajeComision);
-        fachada.agregarMesa(nuevaMesa); // Notifica a los observadores registrados
+        fachada.agregarMesa(nuevaMesa);
     }
 
     public List<Mesa> obtenerMesas() {
@@ -45,7 +45,7 @@ public class ControlMesa implements Observador {
                 vistaControlMesa.mostrarMensaje("Jugador ingresado a la mesa.");
 
                 if (mesa.getCantidadActualJugadores() == mesa.getCantidadJugadores()) {
-                    iniciarJuego(mesa); // Inicia el juego cuando la mesa está completa
+                    iniciarJuego(mesa); 
                 }
             } else {
                 vistaControlMesa.mostrarError("No se pudo ingresar al jugador. La mesa puede estar llena.");

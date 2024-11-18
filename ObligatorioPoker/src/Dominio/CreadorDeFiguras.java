@@ -4,12 +4,6 @@ import java.util.List;
 
 public class CreadorDeFiguras {
 
-    /**
-     * Determina la figura que corresponde a una lista de cartas.
-     *
-     * @param cartas Lista de cartas que se analizarán.
-     * @return La figura correspondiente (Poker, Escalera, etc.).
-     */
     public static Figura crearFigura(List<Carta> cartas) {
         if (new Poker(cartas).esValida(cartas)) {
             return new Poker(cartas);

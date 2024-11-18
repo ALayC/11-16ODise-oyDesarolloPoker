@@ -54,7 +54,7 @@ public class AdministrarMesasControlador implements Observador {
         double saldoMinimo = mesa.getApuestaBase() * 10;
 
         if (jugador.getSaldo() >= saldoMinimo) {
-            // Evitar duplicación de jugador en la misma mesa
+
             if (mesa.getParticipaciones().stream().anyMatch(p -> p.getUnJugador().equals(jugador))) {
                 mesaVista.mostrarError("El jugador ya está en la mesa.");
                 return;
@@ -103,14 +103,14 @@ public class AdministrarMesasControlador implements Observador {
             Jugador jugador = participacion.getUnJugador();
             List<Carta> cartasDeJugador = participacion.obtenerCartasDeParticipacion();
 
-            // Crear el diálogo para el jugador actual
+
             DialogPanelCartas dialog = new DialogPanelCartas(null, participacion); 
             dialog.setTitle("Jugador: " + jugador.getNombreCompleto());
 
-            // Cargar las cartas en el panel de cartas
+
             dialog.cargarCartas(new ArrayList<>(cartasDeJugador));
 
-            // Mostrar el diálogo
+
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
         }

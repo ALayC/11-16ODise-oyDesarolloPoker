@@ -6,34 +6,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Clase que representa la participación de un jugador en una mesa de póker.
- * Extiende Observable para notificar a los observadores sobre cambios
- * importantes.
+ * Clase que representa la participación de un jugador en una mesa Extiende
+ * Observable para notificar a los observadores sobre cambios importantes.
  */
 public class Participacion extends Observable {
 
-    private Jugador unJugador;            // Jugador asociado a esta participación
-    private Mesa unaMesa;                 // Mesa en la que participa
-    private Apuesta unaApuesta;           // Apuesta actual del jugador en la mano
-    private Mano unaMano;                 // Mano actual del jugador
-    private Estado estado;                // Estado de la participación en la mano
-    private double totalApostado;         // Total de apuestas realizadas por el jugador
-    private double totalGanado;           // Total ganado en la mesa
-    private double saldoInicial;          // Saldo del jugador al inicio de la participación
+    private Jugador unJugador;
+    private Mesa unaMesa;
+    private Apuesta unaApuesta;
+    private Mano unaMano;
+    private Estado estado;
+    private double totalApostado;
+    private double totalGanado;
+    private double saldoInicial;
     private List<Carta> cartas = new ArrayList<>();
     private Figura figura;
 
-    // Estados posibles para una participación
     public enum Estado {
         APUESTA, PASA, PAGA, NO_PAGA, ESPERANDO, JUGAR_DE_NUEVO, ESPERANDO_RONDA, CAMBIO_DE_CARTAS
     }
 
-    // Eventos posibles para notificar a los observadores
     public enum Eventos {
         APUESTA
     }
 
-    // Constructor que inicializa una participación con un jugador y una mesa
     public Participacion(Jugador jugador, Mesa mesa, double saldoInicial) {
         this.unJugador = jugador;
         this.unaMesa = mesa;
@@ -41,14 +37,12 @@ public class Participacion extends Observable {
         this.estado = Estado.ESPERANDO;
         this.totalApostado = 0;
         this.totalGanado = 0;
-        this.cartas = new ArrayList<>(cartas); // Inicializa las cartas
+        this.cartas = new ArrayList<>(cartas);
     }
 
-    // Constructor vacío para otros usos o pruebas
     public Participacion() {
     }
 
-    // Getters y Setters
     public double getTotalGanado() {
         return totalGanado;
     }
@@ -71,14 +65,14 @@ public class Participacion extends Observable {
 
     public void setEstado(Estado state) {
         this.estado = state;
-        avisar("EstadoActualizado"); // Notifica los cambios en el estado
+        avisar("EstadoActualizado");
     }
 
     public Jugador getUnJugador() {
         return unJugador;
     }
-    
-    public String getNombreDeJugador(Jugador jugador){
+
+    public String getNombreDeJugador(Jugador jugador) {
         return jugador.getNombreCompleto();
     }
 
@@ -116,41 +110,37 @@ public class Participacion extends Observable {
 
     public void setSaldoInicial(double saldoInicial) {
         this.saldoInicial = saldoInicial;
-        avisar("SaldoActualizado"); // Notifica los cambios en el saldo
+        avisar("SaldoActualizado");
     }
 
-    // Método para realizar una apuesta
     public boolean apostar(double monto) {
         if (saldoInicial >= monto) {
-            saldoInicial -= monto; // Descontamos el monto del saldo inicial
+            saldoInicial -= monto;
             totalApostado += monto;
-            setEstado(Estado.APUESTA); // Cambiar el estado a APUESTA
-            avisar(Eventos.APUESTA); // Notificar sobre la apuesta
+            setEstado(Estado.APUESTA);
+            avisar(Eventos.APUESTA);
             return true;
         } else {
             setEstado(Estado.NO_PAGA);
-            return false; // Saldo insuficiente para la apuesta
+            return false;
         }
     }
 
-    // Método para gestionar cuando el jugador gana la mano
     public void esGanador(double pozo) {
-        System.out.println("Saldo antes "+unJugador.getSaldo() + unJugador.getNombre());
+        System.out.println("Saldo antes " + unJugador.getSaldo() + unJugador.getNombre());
         saldoInicial = unJugador.getSaldo();
         totalGanado += pozo + saldoInicial;
         unJugador.setSaldo((float) totalGanado);
         System.out.println("Participacion" + pozo);
-        System.out.println("Saldo despues " + unJugador.getSaldo()+ unJugador.getNombre());
+        System.out.println("Saldo despues " + unJugador.getSaldo() + unJugador.getNombre());
         avisar("Ganador de la mano");
     }
 
-    // Método para gestionar cuando el jugador no gana la mano
     public void noEsGanador() {
         totalGanado -= unaMesa.getMontoApostado();
         setEstado(Estado.NO_PAGA);
     }
 
-    // Verifica si el jugador está esperando la ronda actual
     public boolean esperandoRonda() {
         return estado.equals(Estado.ESPERANDO_RONDA);
     }
@@ -161,18 +151,18 @@ public class Participacion extends Observable {
 
     public void setCartas(List<Carta> nuevasCartas) {
         this.cartas = nuevasCartas;
-        calcularFigura(); // Recalcula la figura con las nuevas cartas
+        calcularFigura();
         avisar("CartasActualizadas");
     }
 
     public void agregarCartas(List<Carta> nuevasCartas) {
         this.cartas.addAll(nuevasCartas);
-        avisar("CartasActualizadas"); // Notifica los cambios en las cartas
+        avisar("CartasActualizadas");
     }
 
     public void actualizarSaldo(double nuevoSaldo) {
         this.saldoInicial = nuevoSaldo;
-        avisar("SaldoActualizado"); // Notifica cambios en el saldo
+        avisar("SaldoActualizado");
     }
 
     public Figura getFigura() {
@@ -184,23 +174,23 @@ public class Participacion extends Observable {
     }
 
     public List<Carta> obtenerCartasDeParticipacion() {
-        return new ArrayList<>(cartas); // Devuelve una copia de las cartas
+        return new ArrayList<>(cartas);
     }
 
     public void pasar() {
-        setEstado(Estado.PASA); // Cambiar el estado a PASA
+        setEstado(Estado.PASA);
         avisar("Jugador pasó el turno");
     }
 
     public boolean pagarApuesta(double monto) {
         if (saldoInicial >= monto) {
-            saldoInicial -= monto; // Descuenta el monto del saldo inicial
-            totalApostado += monto; // Incrementa el total apostado por el jugador
-            setEstado(Estado.PAGA); // Cambia el estado a PAGA
-            avisar("Pago realizado"); // Notifica el cambio de estado
-            return true; // Pago exitoso
+            saldoInicial -= monto;
+            totalApostado += monto;
+            setEstado(Estado.PAGA);
+            avisar("Pago realizado");
+            return true;
         }
-        return false; // Saldo insuficiente
+        return false;
     }
 
     public void calcularFigura() {
@@ -212,7 +202,7 @@ public class Participacion extends Observable {
         cartas.clear();
         figura = null;
         estado = Estado.ESPERANDO;
-        avisar("Preparado para nueva mano."); // Notifica cambios
+        avisar("Preparado para nueva mano.");
     }
 
     public boolean estaActivo() {
@@ -223,28 +213,27 @@ public class Participacion extends Observable {
         if (saldoInicial >= monto) {
             unJugador.setSaldo((float) (unJugador.getSaldo() - unaMesa.getApuestaBase()));
             System.out.println("Jugador Saldo" + unJugador.getSaldo());
-            avisar("SaldoActualizado"); // Notifica a los observadores sobre el cambio en el saldo
-            return true; // Indica que el descuento fue exitoso
+            avisar("SaldoActualizado");
+            return true;
         } else {
-            return false; // Indica que no hay saldo suficiente
+            return false;
         }
     }
 
     public void determinarYMostrarFigura() {
-        Figura figura = getFigura(); // Obtén la figura calculada
-        calcularFigura(); // Calcula la figura basada en las cartas
+        Figura figura = getFigura();
+        calcularFigura();
 
     }
 
-public List<Carta> intercambiarCartas(List<Carta> nuevasCartas) {
-    List<Carta> cartasCambiadas = this.cartas.stream()
-            .filter(Carta::estaVisible) // Filtra las cartas marcadas como visibles para cambio
-            .collect(Collectors.toList());
+    public List<Carta> intercambiarCartas(List<Carta> nuevasCartas) {
+        List<Carta> cartasCambiadas = this.cartas.stream()
+                .filter(Carta::estaVisible)
+                .collect(Collectors.toList());
 
-    this.cartas.removeAll(cartasCambiadas); // Elimina las cartas seleccionadas
-    this.cartas.addAll(nuevasCartas); // Agrega las nuevas cartas
-    return cartasCambiadas; // Retorna las cartas que fueron cambiadas
-}
-
+        this.cartas.removeAll(cartasCambiadas);
+        this.cartas.addAll(nuevasCartas);
+        return cartasCambiadas;
+    }
 
 }

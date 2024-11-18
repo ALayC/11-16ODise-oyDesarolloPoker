@@ -4,13 +4,13 @@
  */
 package IU;
 
-
 import Controladores.LoginAdministradorControlador;
 import Controladores.LoginControlador;
 import Dominio.Administrador;
 import Dominio.Usuario;
 import Servicios.Fachada;
 import java.awt.Frame;
+
 /**
  *
  * @author Santiago
@@ -20,8 +20,8 @@ public class AdministradorLoginVistaDialog extends LoginVistaDialog {
     public AdministradorLoginVistaDialog() {
         setTitle("Login | Administrador");
     }
-    
-   @Override
+
+    @Override
     public void ejecutarSiguienteCU(Usuario usuario) {
         Administrador administrador = (Administrador) usuario;
         new VistaAdministrador(administrador).setVisible(true);
@@ -32,7 +32,4 @@ public class AdministradorLoginVistaDialog extends LoginVistaDialog {
         return new LoginAdministradorControlador(vista);
     }
 
-   
-
-    
 }

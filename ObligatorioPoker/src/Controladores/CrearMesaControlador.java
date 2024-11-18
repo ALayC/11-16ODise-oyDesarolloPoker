@@ -46,7 +46,7 @@ public class CrearMesaControlador implements Observador {
     @Override
     public void actualizar(Observable origen, Object evento) {
         if (EventosMesa.MesaCreada.equals(evento)) {
-        // Realiza alguna acción, por ejemplo, actualizar la vista o hacer algo cuando se cree una nueva mesa
+
         mesaVista.mostrarMensaje("La mesa ha sido creada con éxito.");
        
     }

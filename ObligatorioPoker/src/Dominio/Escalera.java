@@ -14,17 +14,16 @@ public class Escalera extends Figura {
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        // Ordenar las cartas por su valor de menor a mayor
         cartas.sort((c1, c2) -> Integer.compare(c1.getValorCarta(), c2.getValorCarta()));
 
-        // Verificar si los valores son consecutivos
+
         for (int i = 1; i < cartas.size(); i++) {
             if (cartas.get(i).getValorCarta() - cartas.get(i - 1).getValorCarta() != 1) {
-                return false; // Si no son consecutivos, no es una escalera
+                return false; 
             }
         }
 
-        return true; // Todas las cartas son consecutivas, es una escalera
+        return true;
     }
 
     @Override

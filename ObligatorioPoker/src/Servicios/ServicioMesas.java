@@ -12,12 +12,12 @@ public class ServicioMesas extends Observable {
     public void agregarMesa(Mesa mesa) {
         mesas.add(mesa);
         mesa.setNumeroMesa(numeroMesaActual++); 
-        avisar(mesa);  // Notificar a los observadores cuando se agrega una mesa
+        avisar(mesa);  
         
     }
 
     public ArrayList<Mesa> getMesas() {
-        return new ArrayList<>(mesas);  // Devuelve una copia para evitar modificaciones directas
+        return new ArrayList<>(mesas);  
     }
     
     public Mesa getMesaPorNumero(int numeroMesa) {
@@ -26,13 +26,13 @@ public class ServicioMesas extends Observable {
                 return mesa;
             }
         }
-        return null;  // Devuelve null si no encuentra la mesa
+        return null;  
     }
     
     public boolean agregarJugadorAMesa(int numeroMesa, Jugador jugador) {
         Mesa mesa = getMesaPorNumero(numeroMesa);
         if (mesa != null && mesa.agregarJugador(jugador)) {
-            avisar(mesa);  // Notificar a los observadores
+            avisar(mesa);  
             return true;
         }
         return false;

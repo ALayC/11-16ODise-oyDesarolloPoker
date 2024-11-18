@@ -26,7 +26,7 @@ public abstract class Figura {
 
     @Override
     public String toString() {
-        return tipoFigura + " con cartas: " + cartas;
+        return " " +tipoFigura ;
     }
 
 

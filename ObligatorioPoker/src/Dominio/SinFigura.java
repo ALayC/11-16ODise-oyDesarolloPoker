@@ -13,8 +13,8 @@ public class SinFigura extends Figura {
 
 @Override
 public boolean esValida(List<Carta> cartas) {
-    // Siempre es válida si no se detecta ninguna figura superior
-    return true; // "Sin figura" es el caso por defecto.
+   
+    return true; 
 }
 
 

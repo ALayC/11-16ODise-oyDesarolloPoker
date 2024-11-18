@@ -137,6 +137,10 @@ public class JuegoPokerControlador {
                 "Has salido de la mesa. Gracias por participar.",
                 "Jugador Retirado",
                 JOptionPane.INFORMATION_MESSAGE);
+    
+       if(mesa.getCantidadActualJugadores() < mesa.getCantidadJugadores()){
+           
+       }
     }
 
     public void finalizarMano() {
@@ -251,9 +255,13 @@ public class JuegoPokerControlador {
     }
 
     private void verificarEstadoMesa() {
-        if (mesa.getParticipaciones().isEmpty()) {
-            juegoActivo = false; // Finaliza el juego si no hay jugadores
+        if (mesa.getParticipaciones().size() == 1) {
+            juegoActivo = false; // Finaliza el juego si  hay menos jugadores
             JOptionPane.showMessageDialog(null, "La mesa se ha quedado sin jugadores.");
+            mesa.getParticipaciones().forEach(participacion -> {
+                DialogPanelCartas vista = vistas.get(mesa.getParticipaciones().indexOf(participacion));
+                vista.dispose();
+            });
         } else {
             // Actualiza a los jugadores restantes
             mesa.getParticipaciones().forEach(participacion -> {
@@ -414,10 +422,10 @@ public class JuegoPokerControlador {
         }
     }
 
-public List<CartaPoker> getCartasSeleccionadas() {
-    return cartas.stream() // Asegúrate de que `cartas` esté definido en tu clase.
-                 .filter(CartaPoker::estaVisible) // Usa `estaVisible()` en lugar de `estaSeleccionada()`
-                 .collect(Collectors.toList());
-}
+    public List<CartaPoker> getCartasSeleccionadas() {
+        return cartas.stream() // Asegúrate de que `cartas` esté definido en tu clase.
+                .filter(CartaPoker::estaVisible) // Usa `estaVisible()` en lugar de `estaSeleccionada()`
+                .collect(Collectors.toList());
+    }
 
 }

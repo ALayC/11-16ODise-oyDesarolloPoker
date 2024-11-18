@@ -110,7 +110,7 @@ public class Mesa extends Observable {
         avisar(EventosMesa.MesaCreada);
     }
 
-    public void cerrarMesa() {
+    public void cerrarMesa(Mesa mesa) {
         estado.finalizarJuego(this);
         avisar("Mesa cerrada");  // Notificar que la mesa ha sido cerrada
     }

@@ -4,7 +4,9 @@
  */
 package Dominio;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Trio extends Figura {
 
@@ -14,10 +16,23 @@ public class Trio extends Figura {
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        // Validar si las cartas contienen exactamente un trío
-        return cartas.stream()
-                .filter(c -> cartas.stream().filter(c2 -> c2.getValorCarta() == c.getValorCarta()).count() == 3)
-                .count() == 3;
+        Map<Integer, Integer> conteoValores = new HashMap<>();
+
+        // Contar ocurrencias de cada valor de carta
+        for (Carta carta : cartas) {
+            int valor = carta.getValorCarta();
+            conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
+        }
+
+        // Verificar si hay exactamente un valor que aparece 3 veces
+        int trios = 0;
+        for (int cantidad : conteoValores.values()) {
+            if (cantidad == 3) {
+                trios++;
+            }
+        }
+
+        return trios == 1; // Exactamente un trío
     }
 
     @Override
@@ -33,4 +48,3 @@ public class Trio extends Figura {
         return Integer.compare(miTrio, otroTrio);
     }
 }
-

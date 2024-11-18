@@ -4,7 +4,9 @@
  */
 package Dominio;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Par extends Figura {
 
@@ -14,10 +16,25 @@ public class Par extends Figura {
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        // Validar si las cartas contienen exactamente un par
-        return cartas.stream()
-                .filter(c -> cartas.stream().filter(c2 -> c2.getValorCarta() == c.getValorCarta()).count() == 2)
-                .count() == 2;
+        // Mapa para contar las ocurrencias de cada valor
+        Map<Integer, Integer> conteoValores = new HashMap<>();
+
+        // Contar cuántas veces aparece cada valor
+        for (Carta carta : cartas) {
+            int valor = carta.getValorCarta();
+            conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
+        }
+
+        // Verificar si existe exactamente un par (valor que aparece exactamente 2 veces)
+        int pares = 0;
+        for (int cantidad : conteoValores.values()) {
+            if (cantidad == 2) {
+                pares++;
+            }
+        }
+
+        // Debe haber exactamente un par
+        return pares == 1;
     }
 
     @Override
@@ -33,4 +50,3 @@ public class Par extends Figura {
         return Integer.compare(miPar, otroPar);
     }
 }
-

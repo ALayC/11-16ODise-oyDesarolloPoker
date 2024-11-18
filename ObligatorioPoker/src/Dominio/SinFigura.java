@@ -11,19 +11,12 @@ public class SinFigura extends Figura {
         super(TipoFigura.SIN_FIGURA, cartas);
     }
 
-    @Override
-    public boolean esValida(List<Carta> cartas) {
-        // Asegura que las cartas estén ordenadas antes de validarlas
-        cartas.sort((c1, c2) -> Integer.compare(c1.getValorCarta(), c2.getValorCarta()));
+@Override
+public boolean esValida(List<Carta> cartas) {
+    // Siempre es válida si no se detecta ninguna figura superior
+    return true; // "Sin figura" es el caso por defecto.
+}
 
-        // Verifica si las cartas están en secuencia consecutiva
-        for (int i = 1; i < cartas.size(); i++) {
-            if (cartas.get(i).getValorCarta() - cartas.get(i - 1).getValorCarta() != 1) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     @Override
     public int compararCon(Figura otraFigura) {

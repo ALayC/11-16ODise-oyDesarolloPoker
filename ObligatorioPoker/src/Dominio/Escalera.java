@@ -7,19 +7,24 @@ package Dominio;
 import java.util.List;
 
 public class Escalera extends Figura {
+
     public Escalera(List<Carta> cartas) {
         super(TipoFigura.ESCALERA, cartas);
     }
 
     @Override
     public boolean esValida(List<Carta> cartas) {
+        // Ordenar las cartas por su valor de menor a mayor
         cartas.sort((c1, c2) -> Integer.compare(c1.getValorCarta(), c2.getValorCarta()));
+
+        // Verificar si los valores son consecutivos
         for (int i = 1; i < cartas.size(); i++) {
             if (cartas.get(i).getValorCarta() - cartas.get(i - 1).getValorCarta() != 1) {
-                return false;
+                return false; // Si no son consecutivos, no es una escalera
             }
         }
-        return true;
+
+        return true; // Todas las cartas son consecutivas, es una escalera
     }
 
     @Override
@@ -30,9 +35,8 @@ public class Escalera extends Figura {
             return -1;
         }
         return Integer.compare(
-            this.getCartas().get(this.getCartas().size() - 1).getValorCarta(),
-            otraFigura.getCartas().get(otraFigura.getCartas().size() - 1).getValorCarta()
+                this.getCartas().get(this.getCartas().size() - 1).getValorCarta(),
+                otraFigura.getCartas().get(otraFigura.getCartas().size() - 1).getValorCarta()
         );
     }
 }
-

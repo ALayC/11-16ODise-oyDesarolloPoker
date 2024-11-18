@@ -185,13 +185,15 @@ public class Participacion extends Observable {
 
     public boolean pagarApuesta(double monto) {
         if (saldoInicial >= monto) {
-            saldoInicial -= monto;
-            totalApostado += monto;
-            setEstado(Estado.PAGA);
-            return true;
+            saldoInicial -= monto; // Descuenta el monto del saldo inicial
+            totalApostado += monto; // Incrementa el total apostado por el jugador
+            setEstado(Estado.PAGA); // Cambia el estado a PAGA
+            avisar("Pago realizado"); // Notifica el cambio de estado
+            return true; // Pago exitoso
         }
-        return false;
+        return false; // Saldo insuficiente
     }
+
 
     public void calcularFigura() {
 

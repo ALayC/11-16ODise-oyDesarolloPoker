@@ -21,6 +21,7 @@ public class Mesa extends Observable {
     private double ultimaApuesta = 0; // Almacena el monto de la última apuesta
     private Participacion jugadorUltimaApuesta; // Almacena quién hizo la última apuesta
     // Constructor vacío
+
     public Mesa() {
         this.manos = new ArrayList<>();
         this.participaciones = new ArrayList<>();
@@ -251,20 +252,24 @@ public class Mesa extends Observable {
         return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
     }
 
-    public void iniciarNuevaMano() {
-        Mazo mazo = new Mazo();
-        mazo.barajar();
+public void iniciarNuevaMano() {
+    Mazo mazo = new Mazo();
+    mazo.barajar();
 
-        Mano nuevaMano = new Mano(numeroManoActual);
-        for (Participacion participacion : participaciones) {
-            participacion.setCartas(mazo.repartirMano(5)); // Reparte nuevas cartas
-            nuevaMano.agregarParticipacion(participacion);
-        }
-
-        manos.add(nuevaMano);
-        numeroManoActual++;
-        avisar("Nueva mano iniciada.");
+    Mano nuevaMano = new Mano(numeroManoActual);
+    for (Participacion participacion : participaciones) {
+        // Reparte nuevas cartas
+        List<Carta> nuevasCartas = mazo.repartirMano(5);
+        participacion.setCartas(nuevasCartas); // Actualiza las cartas en la participación
+        nuevaMano.agregarParticipacion(participacion);
     }
+    System.out.println("inicia nueva mano");
+    manos.add(nuevaMano);
+    numeroManoActual++;
+    avisar("Nueva mano iniciada.");
+}
+
+
 
     public void barajarNuevaMano() {
         Mazo mazo = new Mazo();
@@ -305,26 +310,28 @@ public class Mesa extends Observable {
     }
 
     public void finalizarMano() {
-        // Filtra participaciones válidas y con figura no nula
-        Participacion ganador = participaciones.stream()
-                .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA && p.getFigura() != null)
-                .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
-                .orElse(null);
-
-        if (ganador != null) {
-            double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
-            ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
-            montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
-            System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
+        if (todosHanPasado()) {
+            System.out.println("Todos pasaron. Iniciando nueva mano...");
+            iniciarNuevaMano(); // Reinicia la mano
         } else {
-            System.out.println("No hay un ganador en esta mano.");
+            Participacion ganador = participaciones.stream()
+                    .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA && p.getFigura() != null)
+                    .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
+                    .orElse(null);
+
+            if (ganador != null) {
+                double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
+                ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
+                montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
+                System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
+            } else {
+                System.out.println("No hay un ganador en esta mano.");
+            }
+
+            // Verifica el saldo de los jugadores
+            verificarSaldoJugadores();
+            iniciarNuevaMano(); // Reinicia la mesa con una nueva mano
         }
-
-        // Verifica el saldo de los jugadores
-        verificarSaldoJugadores();
-
-        // Inicia una nueva mano
-        barajarNuevaMano();
     }
 
     private void verificarSaldoJugadores() {
@@ -344,39 +351,44 @@ public class Mesa extends Observable {
             finalizarMano(); // Termina la mano si todos pasan
         }
     }
-    
+
     public double getUltimaApuesta() {
-    return ultimaApuesta;
-}
+        return ultimaApuesta;
+    }
 
-public void setUltimaApuesta(double ultimaApuesta) {
-    this.ultimaApuesta = ultimaApuesta;
-}
+    public void setUltimaApuesta(double ultimaApuesta) {
+        this.ultimaApuesta = ultimaApuesta;
+    }
 
-public Participacion getJugadorUltimaApuesta() {
-    return jugadorUltimaApuesta;
-}
+    public Participacion getJugadorUltimaApuesta() {
+        return jugadorUltimaApuesta;
+    }
 
-public void setJugadorUltimaApuesta(Participacion jugadorUltimaApuesta) {
-    this.jugadorUltimaApuesta = jugadorUltimaApuesta;
-}
+    public void setJugadorUltimaApuesta(Participacion jugadorUltimaApuesta) {
+        this.jugadorUltimaApuesta = jugadorUltimaApuesta;
+    }
 
-public void determinarGanador() {
-    Participacion ganador = null;
-    for (Participacion participacion : participaciones) {
-        if (ganador == null || participacion.getFigura().esMejorQue(ganador.getFigura())) {
-            ganador = participacion;
+    public void determinarGanador() {
+        Participacion ganador = null;
+        for (Participacion participacion : participaciones) {
+            if (ganador == null || participacion.getFigura().esMejorQue(ganador.getFigura())) {
+                ganador = participacion;
+            }
+        }
+        if (ganador != null) {
+            double pozo = getPozo();
+            ganador.esGanador(pozo); // Otorga el pozo al ganador
+            setUltimaApuesta(0); // Reinicia la última apuesta
+            setJugadorUltimaApuesta(null); // Limpia el registro de la última apuesta
+            System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + " | Figura: " + ganador.getFigura());
+        } else {
+            System.out.println("No hay ganador.");
         }
     }
-    if (ganador != null) {
-        double pozo = getPozo();
-        ganador.esGanador(pozo); // Otorga el pozo al ganador
-        setUltimaApuesta(0); // Reinicia la última apuesta
-        setJugadorUltimaApuesta(null); // Limpia el registro de la última apuesta
-        System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + " | Figura: " + ganador.getFigura());
-    } else {
-        System.out.println("No hay ganador.");
+
+    public boolean todosHanPasado() {
+        return participaciones.stream()
+                .allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
     }
-}
 
 }

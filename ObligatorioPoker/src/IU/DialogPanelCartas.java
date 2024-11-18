@@ -4,14 +4,17 @@
  */
 package IU;
 
+import Dominio.Carta;
 import Dominio.Participacion;
 import Observador.Observable;
 import Observador.Observador;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -19,6 +22,7 @@ import javax.swing.JScrollPane;
 import panelCartasPoker.CartaPoker;
 import panelCartasPoker.PanelCartasListener;
 import panelCartasPoker.PanelCartasPokerException;
+import panelCartasPoker.PanelCartasPoker;
 
 /**
  *
@@ -37,6 +41,8 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     private DefaultListModel<String> modeloJugadores;
     private JList<String> listaFigurasDisponibles;
     private DefaultListModel<String> modeloFiguras;
+    private javax.swing.JButton btnConfirmarCambio;
+    private List<CartaPoker> cartasSeleccionadas = new ArrayList<>();
 
     public DialogPanelCartas(java.awt.Frame parent, Participacion participacion) {
         super(parent);
@@ -167,6 +173,14 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     @Override
     public void clickEnCarta(CartaPoker carta) {
         JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
+        if (carta.estaVisible()) {
+        if (cartasSeleccionadas.contains(carta)) {
+            cartasSeleccionadas.remove(carta); // Si ya está seleccionada, quítala
+        } else {
+            cartasSeleccionadas.add(carta); // Si no está seleccionada, agrégala
+        }
+    }
+    JOptionPane.showMessageDialog(this, carta.toString(), "Click en carta", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // Métodos públicos para acceder a los botones
@@ -220,84 +234,115 @@ public class DialogPanelCartas extends javax.swing.JDialog implements PanelCarta
     }
 
     private void configurarVistaAdicional() {
-        // Inicializa los nuevos componentes
-        lblNumeroMesa = new JLabel("Mesa: -");
-        lblNumeroMano = new JLabel("Mano: -");
-        lblFiguraAlta = new JLabel("Figura alta: -");
-        lblPozo = new JLabel("Pozo: $0");
+    // Inicializa los nuevos componentes
+    lblNumeroMesa = new JLabel("Mesa: -");
+    lblNumeroMano = new JLabel("Mano: -");
+    lblFiguraAlta = new JLabel("Figura alta: -");
+    lblPozo = new JLabel("Pozo: $0");
 
-        modeloJugadores = new DefaultListModel<>();
-        JList<String> listaJugadores = new JList<>(modeloJugadores);
-        listaJugadores.setBorder(BorderFactory.createTitledBorder("Jugadores en la mesa"));
+    modeloJugadores = new DefaultListModel<>();
+    listaJugadores = new JList<>(modeloJugadores);
+    listaJugadores.setBorder(BorderFactory.createTitledBorder("Jugadores en la mesa"));
 
-        modeloFiguras = new DefaultListModel<>();
-        JList<String> listaFigurasDisponibles = new JList<>(modeloFiguras);
-        listaFigurasDisponibles.setBorder(BorderFactory.createTitledBorder("Figuras disponibles"));
+    modeloFiguras = new DefaultListModel<>();
+    listaFigurasDisponibles = new JList<>(modeloFiguras);
+    listaFigurasDisponibles.setBorder(BorderFactory.createTitledBorder("Figuras disponibles"));
 
-        JScrollPane scrollJugadores = new JScrollPane(listaJugadores);
-        JScrollPane scrollFiguras = new JScrollPane(listaFigurasDisponibles);
+    JScrollPane scrollJugadores = new JScrollPane(listaJugadores);
+    JScrollPane scrollFiguras = new JScrollPane(listaFigurasDisponibles);
 
-        // Modifica el diseño del formulario para incluir los nuevos componentes
-        GroupLayout layout = (GroupLayout) getContentPane().getLayout();
-        getContentPane().setLayout(layout);
+    btnConfirmarCambio = new JButton("Confirmar Cambio");
+    btnConfirmarCambio.addActionListener(e -> manejarConfirmarCambio());
 
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(20)
-                                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(lblNumeroMesa)
-                                                .addGap(40) // Espacio adicional entre elementos
-                                                .addComponent(lblNumeroMano)
-                                                .addGap(40)
-                                                .addComponent(lblFiguraAlta)
-                                                .addGap(40)
-                                                .addComponent(lblPozo))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
-                                                .addGap(40)
-                                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(50)
-                                                .addComponent(btnPasar)
-                                                .addGap(50)
-                                                .addComponent(btnApostar)
-                                                .addGap(50)
-                                                .addComponent(btnPagar)
-                                                .addGap(50)
-                                                .addComponent(btnRetirarse)))
-                                .addGap(60)) // Aumenta el margen derecho para expandir
-        );
+    GroupLayout layout = new GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
 
-        layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                        .addGap(20)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblNumeroMesa)
-                                .addComponent(lblNumeroMano)
-                                .addComponent(lblFiguraAlta)
-                                .addComponent(lblPozo))
-                        .addGap(20)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
-                        .addGap(20)
-                        .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(30) // Espacio antes de los botones
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(btnPasar)
-                                .addComponent(btnApostar)
-                                .addComponent(btnPagar)
-                                .addComponent(btnRetirarse))
-                        .addGap(20) // Espacio adicional debajo de los botones
-        );
+    // Configura los gaps automáticos
+    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateContainerGaps(true);
 
-        // Expande el tamaño de la ventana
-        setPreferredSize(new java.awt.Dimension(1100, 700)); // Ajusta el tamaño total (ancho x alto)
-        pack(); // Ajusta los componentes al tamaño preferido
-        setLocationRelativeTo(null); // Centra la ventana en la pantalla
+    // Configuración horizontal
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lblNumeroMesa)
+                .addGap(20)
+                .addComponent(lblNumeroMano)
+                .addGap(20)
+                .addComponent(lblFiguraAlta)
+                .addGap(20)
+                .addComponent(lblPozo))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                .addGap(20)
+                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE))
+            .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(btnPasar)
+                .addGap(20)
+                .addComponent(btnApostar)
+                .addGap(20)
+                .addComponent(btnPagar)
+                .addGap(20)
+                .addComponent(btnConfirmarCambio)
+                .addGap(20)
+                .addComponent(btnRetirarse))
+    );
+
+    // Configuración vertical
+    layout.setVerticalGroup(
+        layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(lblNumeroMesa)
+                .addComponent(lblNumeroMano)
+                .addComponent(lblFiguraAlta)
+                .addComponent(lblPozo))
+            .addGap(20)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(scrollJugadores, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollFiguras, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE))
+            .addGap(20)
+            .addComponent(panelCartasPoker1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addGap(20)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(btnPasar)
+                .addComponent(btnApostar)
+                .addComponent(btnPagar)
+                .addComponent(btnConfirmarCambio)
+                .addComponent(btnRetirarse))
+    );
+
+    pack(); // Ajusta el tamaño de la ventana
+    setLocationRelativeTo(null); // Centra la ventana en la pantalla
+}
+
+
+    private void manejarConfirmarCambio() {
+        if (cartasSeleccionadas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione al menos una carta para cambiar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Convertir las cartas seleccionadas a objetos de tipo `Carta`
+        List<Carta> cartasAIntercambiar = cartasSeleccionadas.stream()
+                .map(cartaPoker -> new Carta(cartaPoker.getValorCarta(), cartaPoker.getPaloCarta()))
+                .collect(Collectors.toList());
+
+        // Notificar al controlador para manejar el cambio
+        participacion.intercambiarCartas(cartasAIntercambiar);
+
+        JOptionPane.showMessageDialog(this, "Cartas cambiadas exitosamente.", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+
+        // Actualizar la vista con las nuevas cartas
+        cargarCartas(new ArrayList<>(participacion.getCartas()));
+
+        // Vaciar la lista de seleccionadas para futuras acciones
+        cartasSeleccionadas.clear();
     }
 
+
+    public PanelCartasPoker getPanelCartasPoker() {
+        return panelCartasPoker1;
+    }
+    
 }

@@ -4,7 +4,7 @@ package Dominio;
 import panelCartasPoker.CartaPoker;
 
 
-public class Carta implements CartaPoker{
+public class Carta implements panelCartasPoker.CartaPoker{
 
     private int numero;
     private String palo;

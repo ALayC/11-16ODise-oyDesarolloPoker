@@ -3,6 +3,7 @@ package Dominio;
 import Observador.Observable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Clase que representa la participación de un jugador en una mesa de póker.
@@ -24,7 +25,7 @@ public class Participacion extends Observable {
 
     // Estados posibles para una participación
     public enum Estado {
-        APUESTA, PASA, PAGA, NO_PAGA, ESPERANDO, JUGAR_DE_NUEVO, ESPERANDO_RONDA
+        APUESTA, PASA, PAGA, NO_PAGA, ESPERANDO, JUGAR_DE_NUEVO, ESPERANDO_RONDA, CAMBIO_DE_CARTAS
     }
 
     // Eventos posibles para notificar a los observadores
@@ -194,7 +195,6 @@ public class Participacion extends Observable {
         return false; // Saldo insuficiente
     }
 
-
     public void calcularFigura() {
 
         figura = CreadorDeFiguras.crearFigura(cartas);
@@ -226,5 +226,16 @@ public class Participacion extends Observable {
         calcularFigura(); // Calcula la figura basada en las cartas
 
     }
+
+public List<Carta> intercambiarCartas(List<Carta> nuevasCartas) {
+    List<Carta> cartasCambiadas = this.cartas.stream()
+            .filter(Carta::estaVisible) // Filtra las cartas marcadas como visibles para cambio
+            .collect(Collectors.toList());
+
+    this.cartas.removeAll(cartasCambiadas); // Elimina las cartas seleccionadas
+    this.cartas.addAll(nuevasCartas); // Agrega las nuevas cartas
+    return cartasCambiadas; // Retorna las cartas que fueron cambiadas
+}
+
 
 }

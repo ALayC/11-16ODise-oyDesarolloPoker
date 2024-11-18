@@ -387,5 +387,13 @@ public class Mesa extends Observable {
 
         return todosPasaron;
     }
+        public void iniciarCambioDeCartas() {
+        for (Participacion participacion : participaciones) {
+            if (participacion.getEstado() == Participacion.Estado.PAGA) {
+                participacion.setEstado(Participacion.Estado.CAMBIO_DE_CARTAS);
+            }
+        }
+        avisar("Cambio de cartas iniciado.");
+    }
 
 }

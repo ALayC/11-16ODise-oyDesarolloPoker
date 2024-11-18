@@ -18,7 +18,7 @@ public class Mano {
         this.pozo = 0;
         this.estado = EstadoMano.EN_JUEGO;  // Estado inicial de la mano
         this.creadorDeFiguras = new CreadorDeFiguras(); // Instanciar el generador de figuras
-        
+
     }
 
     // Getter para el número de la mano
@@ -79,25 +79,20 @@ public class Mano {
         return mejorParticipacion; // Devuelve la mejor participación
     }
 
-
-
     // Getter para el ganador
     public Participacion getGanador() {
         return ganador;
     }
-    
-    
-    
-        public boolean todosHanPasado() {
+
+    public boolean todosHanPasado() {
         return participaciones.stream().allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
     }
 
     public void acumularPozo() {
         pozo = participaciones.stream()
-            .mapToDouble(Participacion::getTotalApostado)
-            .sum();
+                .mapToDouble(Participacion::getTotalApostado)
+                .sum();
     }
-
 
     public boolean todosHanJugado() {
         return participaciones.stream()

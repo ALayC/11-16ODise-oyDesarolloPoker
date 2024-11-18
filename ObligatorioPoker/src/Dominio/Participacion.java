@@ -152,7 +152,8 @@ public class Participacion extends Observable {
 
     public void setCartas(List<Carta> nuevasCartas) {
         this.cartas = nuevasCartas;
-        avisar("CartasActualizadas"); // Notifica a los observadores sobre las nuevas cartas
+        calcularFigura(); // Recalcula la figura con las nuevas cartas
+        avisar("CartasActualizadas");
     }
 
     public void agregarCartas(List<Carta> nuevasCartas) {
@@ -193,7 +194,7 @@ public class Participacion extends Observable {
     }
 
     public void calcularFigura() {
-        System.out.println("Calculando figura para cartas: " + cartas);
+
         figura = CreadorDeFiguras.crearFigura(cartas);
     }
 
@@ -215,6 +216,12 @@ public class Participacion extends Observable {
         } else {
             return false; // Indica que no hay saldo suficiente
         }
+    }
+
+    public void determinarYMostrarFigura() {
+        Figura figura = getFigura(); // Obtén la figura calculada
+        calcularFigura(); // Calcula la figura basada en las cartas
+
     }
 
 }

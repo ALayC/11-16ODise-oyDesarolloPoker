@@ -7,21 +7,17 @@ package Dominio;
 import java.util.List;
 
 public class Pierna extends Figura {
+
     public Pierna(List<Carta> cartas) {
         super(TipoFigura.PIERNA, cartas);
     }
 
     @Override
     public boolean esValida(List<Carta> cartas) {
-        for (Carta carta : cartas) {
-            long count = cartas.stream()
+        return cartas.stream()
+                .anyMatch(carta -> cartas.stream()
                 .filter(c -> c.getValorCarta() == carta.getValorCarta())
-                .count();
-            if (count == 3) {
-                return true;
-            }
-        }
-        return false;
+                .count() == 3);
     }
 
     @Override
@@ -32,9 +28,8 @@ public class Pierna extends Figura {
             return -1;
         }
         return Integer.compare(
-            this.getCartas().get(0).getValorCarta(),
-            otraFigura.getCartas().get(0).getValorCarta()
+                this.getCartas().get(0).getValorCarta(),
+                otraFigura.getCartas().get(0).getValorCarta()
         );
     }
 }
-

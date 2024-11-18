@@ -4,24 +4,34 @@
  */
 package Dominio;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Poker extends Figura {
+
     public Poker(List<Carta> cartas) {
         super(TipoFigura.POKER, cartas);
     }
 
     @Override
     public boolean esValida(List<Carta> cartas) {
+        Map<Integer, Integer> conteoValores = new HashMap<>();
+
+        // Contar ocurrencias de cada valor de carta
         for (Carta carta : cartas) {
-            long count = cartas.stream()
-                .filter(c -> c.getValorCarta() == carta.getValorCarta())
-                .count();
-            if (count == 4) {
+            int valor = carta.getValorCarta();
+            conteoValores.put(valor, conteoValores.getOrDefault(valor, 0) + 1);
+        }
+
+        // Verificar si hay exactamente un valor que aparece 4 veces
+        for (int cantidad : conteoValores.values()) {
+            if (cantidad == 4) {
                 return true;
             }
         }
-        return false;
+
+        return false; // No hay póker
     }
 
     @Override
@@ -32,8 +42,8 @@ public class Poker extends Figura {
             return -1;
         }
         return Integer.compare(
-            this.getCartas().get(0).getValorCarta(),
-            otraFigura.getCartas().get(0).getValorCarta()
+                this.getCartas().get(0).getValorCarta(),
+                otraFigura.getCartas().get(0).getValorCarta()
         );
     }
 }

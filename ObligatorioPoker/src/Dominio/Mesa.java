@@ -252,24 +252,22 @@ public class Mesa extends Observable {
         return manos.get(manos.size() - 1); // Devuelve la última mano de la lista
     }
 
-public void iniciarNuevaMano() {
-    Mazo mazo = new Mazo();
-    mazo.barajar();
+    public void iniciarNuevaMano() {
+        Mazo mazo = new Mazo();
+        mazo.barajar();
 
-    Mano nuevaMano = new Mano(numeroManoActual);
-    for (Participacion participacion : participaciones) {
-        // Reparte nuevas cartas
-        List<Carta> nuevasCartas = mazo.repartirMano(5);
-        participacion.setCartas(nuevasCartas); // Actualiza las cartas en la participación
-        nuevaMano.agregarParticipacion(participacion);
+        Mano nuevaMano = new Mano(numeroManoActual);
+        for (Participacion participacion : participaciones) {
+            // Reparte nuevas cartas
+            List<Carta> nuevasCartas = mazo.repartirMano(5);
+            participacion.setCartas(nuevasCartas); // Actualiza las cartas en la participación
+            nuevaMano.agregarParticipacion(participacion);
+        }
+        System.out.println("inicia nueva mano");
+        manos.add(nuevaMano);
+        numeroManoActual++;
+        avisar("Nueva mano iniciada.");
     }
-    System.out.println("inicia nueva mano");
-    manos.add(nuevaMano);
-    numeroManoActual++;
-    avisar("Nueva mano iniciada.");
-}
-
-
 
     public void barajarNuevaMano() {
         Mazo mazo = new Mazo();
@@ -311,26 +309,18 @@ public void iniciarNuevaMano() {
 
     public void finalizarMano() {
         if (todosHanPasado()) {
-            System.out.println("Todos pasaron. Iniciando nueva mano...");
-            iniciarNuevaMano(); // Reinicia la mano
-        } else {
-            Participacion ganador = participaciones.stream()
-                    .filter(p -> p.getEstado() != Participacion.Estado.NO_PAGA && p.getFigura() != null)
-                    .max((p1, p2) -> p1.getFigura().esMejorQue(p2.getFigura()) ? 1 : -1)
-                    .orElse(null);
+            System.out.println("Todos han pasado. Iniciando nueva mano...");
 
-            if (ganador != null) {
-                double pozoMenosComision = montoTotalApostado * (1 - porcentajeComision / 100);
-                ganador.esGanador(pozoMenosComision); // Incrementa el saldo del ganador
-                montoTotalApostado = 0; // Reinicia el pozo para la siguiente mano
-                System.out.println("Ganador: " + ganador.getUnJugador().getNombreCompleto() + ", ganó: $" + pozoMenosComision);
-            } else {
-                System.out.println("No hay un ganador en esta mano.");
+            // Reiniciar estado de jugadores a ESPERANDO y repartir nuevas cartas
+            for (Participacion participacion : participaciones) {
+                participacion.reiniciarParaNuevaMano(); // Limpia estado y figura
+                participacion.setCartas(new Mazo().repartirMano(5)); // Nuevas cartas
             }
 
-            // Verifica el saldo de los jugadores
-            verificarSaldoJugadores();
-            iniciarNuevaMano(); // Reinicia la mesa con una nueva mano
+            // Iniciar una nueva mano
+            iniciarNuevaMano();
+        } else {
+            System.out.println("Error: No todos han pasado.");
         }
     }
 
@@ -387,8 +377,15 @@ public void iniciarNuevaMano() {
     }
 
     public boolean todosHanPasado() {
-        return participaciones.stream()
+        boolean todosPasaron = participaciones.stream()
                 .allMatch(p -> p.getEstado() == Participacion.Estado.PASA);
+
+        if (todosPasaron) {
+            // Cambiar a ESPERANDO antes de reiniciar
+            participaciones.forEach(p -> p.setEstado(Participacion.Estado.ESPERANDO));
+        }
+
+        return todosPasaron;
     }
 
 }

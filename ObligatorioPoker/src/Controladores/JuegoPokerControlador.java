@@ -98,14 +98,18 @@ public void manejarPasar(Participacion participacion) {
     participacion.pasar(); // Actualiza el estado del jugador a PASA
     System.out.println("Jugador " + participacion.getUnJugador().getNombreCompleto() + " pasó.");
 
-    // Verifica si todos los jugadores han pasado
     if (mesa.todosHanPasado()) {
-        System.out.println("Todos los jugadores pasaron. Finalizando mano...");
-        finalizarMano(); // Termina la mano y reinicia si es necesario
+        mesa.finalizarMano(); // Finaliza la mano actual e inicia una nueva
+
+        // Actualizar las vistas de todos los jugadores automáticamente
+        for (Participacion p : mesa.getParticipaciones()) {
+            actualizarVistaJugador(p); // Asegúrate de que todos vean sus nuevas cartas
+        }
     } else {
         verificarEstadoMano(); // Continua verificando el estado normal de la mano
     }
 }
+
 
 
     public void manejarSalir(Participacion participacion) {
@@ -132,19 +136,27 @@ public void manejarPasar(Participacion participacion) {
 
 public void finalizarMano() {
     if (mesa.todosHanPasado()) {
-        System.out.println("Todos pasaron. Iniciando nueva mano...");
+        System.out.println("Todos han pasado. Iniciando nueva mano...");
+        
+        // Cambiar el estado de todos los jugadores a ESPERANDO
+        mesa.getParticipaciones().forEach(p -> p.setEstado(Participacion.Estado.ESPERANDO));
+        
+        // Iniciar la nueva mano
         mesa.iniciarNuevaMano();
-
-        // Actualiza las vistas para reflejar las nuevas cartas
-        mesa.getParticipaciones().forEach(this::actualizarVistaJugador);
+        
+        // Actualizar todas las vistas automáticamente
+        actualizarVistas();
     } else {
-        // Determina el ganador y luego reinicia la mano
+        // Calcular las figuras y determinar el ganador si aplica
         mesa.getParticipaciones().forEach(Participacion::calcularFigura);
         mesa.determinarGanador();
+        determinarGanador();
+        // Reiniciar para nueva mano
         mesa.iniciarNuevaMano();
-        mesa.getParticipaciones().forEach(this::actualizarVistaJugador);
+        actualizarVistas();
     }
 }
+
 
 
 
@@ -332,30 +344,32 @@ public void finalizarMano() {
         });
     }
 
-    public void actualizarVistaJugador(Participacion participacion) {
-    int numeroMesa = mesa.getNumeroMesa();
-    int numeroMano = mesa.getNumeroManoActual();
-    String figuraAlta = participacion.getFigura() != null ? participacion.getFigura().getTipoFigura().toString() : "Sin figura";
-    double pozo = mesa.getPozo();
-
-    List<String> jugadores = new ArrayList<>();
-    for (Participacion p : mesa.getParticipaciones()) {
-        String estado = p.getEstado() != null ? p.getEstado().name() : "Desconocido";
-        jugadores.add(p.getUnJugador().getNombreCompleto() + " (" + estado + ")");
-    }
-
-    List<String> figurasDisponibles = List.of("Póker", "Full House", "Color", "Escalera", "Trío", "Doble Par", "Par", "Sin Figura");
-
+private void actualizarVistaJugador(Participacion participacion) {
     DialogPanelCartas vista = vistas.stream()
             .filter(v -> v != null && v.getParticipacion() == participacion)
             .findFirst()
             .orElse(null);
 
     if (vista != null) {
-        vista.actualizarDatosVista(numeroMesa, numeroMano, figuraAlta, pozo, jugadores, figurasDisponibles);
-        vista.cargarCartas(new ArrayList<>(participacion.getCartas())); // Muestra las nuevas cartas
+        // Carga las cartas nuevas en la vista
+        vista.cargarCartas(new ArrayList<>(participacion.getCartas()));
+
+        // Actualiza datos generales
+        vista.actualizarDatosVista(
+                mesa.getNumeroMesa(),
+                mesa.getNumeroManoActual(),
+                participacion.getFigura() != null ? participacion.getFigura().getTipoFigura().toString() : "Sin figura",
+                mesa.getPozo(),
+                mesa.getParticipaciones().stream()
+                        .map(p -> p.getUnJugador().getNombreCompleto() + " (" + p.getEstado().name() + ")")
+                        .toList(),
+                List.of("Póker", "Full House", "Color", "Escalera", "Trío", "Doble Par", "Par", "Sin Figura")
+        );
     }
 }
+
+
+
 
 
     public void manejarJugadorPasa(Participacion participacion) {
@@ -371,7 +385,9 @@ public void finalizarMano() {
 
 
 private void actualizarVistas() {
-    mesa.getParticipaciones().forEach(this::actualizarVistaJugador);
+    for (Participacion participacion : mesa.getParticipaciones()) {
+        actualizarVistaJugador(participacion);
+    }
 }
 
 

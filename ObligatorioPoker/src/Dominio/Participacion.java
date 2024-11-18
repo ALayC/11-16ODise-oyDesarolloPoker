@@ -204,6 +204,7 @@ public class Participacion extends Observable {
         cartas.clear();
         figura = null;
         estado = Estado.ESPERANDO;
+        avisar("Preparado para nueva mano."); // Notifica cambios
     }
 
     public boolean estaActivo() {
